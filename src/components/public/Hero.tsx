@@ -9,77 +9,77 @@ export function Hero({ hero, profile }: { hero: HeroContent; profile: ProfileCon
   return (
     <section
       id="top"
-      className="relative min-h-[88vh] overflow-hidden px-5 pt-10 pb-16 sm:px-8 sm:pt-16 sm:pb-24"
+      className="relative overflow-hidden px-6 pt-16 pb-20 sm:px-8 sm:pt-20 sm:pb-24"
     >
-      {/* grid lines on background */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 grid grid-cols-2 opacity-[0.04] sm:grid-cols-4"
-      >
-        <div className="border-r border-white" />
-        <div className="border-r border-white" />
-        <div className="border-r border-white hidden sm:block" />
-        <div className="border-r border-white hidden sm:block" />
-      </div>
-
-      <div className="relative mx-auto flex min-h-[78vh] max-w-[1700px] flex-col justify-between">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] uppercase tracking-[2px] text-white/50">
+      <div className="relative mx-auto flex max-w-[1280px] flex-col gap-14">
+        {/* metadata strip */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 pb-4 text-[11px] uppercase tracking-[2px] text-white/40">
           <span className="timecode">
-            [ {profile.name.toUpperCase()} · EDITOR · 2026 ]
+            [ {profile.name} · Editor de vídeo · 2026 ]
           </span>
           <LiveClock />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
+        {/* eyebrow */}
+        <motion.span
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="eyebrow"
+        >
+          Portfolio · v1
+        </motion.span>
+
+        {/* headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="my-12"
+          className="font-display font-extrabold uppercase leading-[0.88] tracking-[-0.02em] text-white"
         >
-          <h1 className="font-display font-extrabold uppercase leading-[0.82] tracking-[-0.03em] text-white">
-            <span className="block text-[clamp(60px,14vw,240px)]">
-              {hero.titleLine1}
-            </span>
-            <span className="block text-[clamp(60px,14vw,240px)] italic text-accent">
-              {hero.titleLine2}
-            </span>
-            <span className="block text-[clamp(60px,14vw,240px)]">
-              {hero.titleLine3}
-            </span>
-          </h1>
-        </motion.div>
+          <span className="block text-[clamp(48px,9vw,140px)]">
+            {hero.titleLine1}
+          </span>
+          <span className="block text-[clamp(48px,9vw,140px)] italic text-accent">
+            {hero.titleLine2}
+          </span>
+          <span className="block text-[clamp(48px,9vw,140px)]">
+            {hero.titleLine3}
+          </span>
+        </motion.h1>
 
-        <div className="flex flex-col-reverse items-start justify-between gap-8 md:flex-row md:items-end">
-          <div className="max-w-md">
-            <p className="text-base leading-relaxed text-white/70 sm:text-lg">
-              {hero.description}
-            </p>
+        {/* bottom row */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="grid grid-cols-1 gap-8 border-t border-white/5 pt-8 md:grid-cols-2 md:items-end md:gap-12"
+        >
+          <p className="max-w-md text-base leading-relaxed text-white/70 sm:text-lg">
+            {hero.description}
+          </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="flex flex-col items-start gap-5 md:items-end">
+            <div className="flex flex-wrap gap-2.5">
               <a
                 href="#work"
-                className="group inline-flex h-12 items-center gap-2.5 rounded-full bg-accent px-6 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-accent px-5 text-[13px] font-medium text-black transition-transform hover:scale-[1.02]"
               >
                 Ver trabalhos
-                <svg width="14" viewBox="0 0 20 17" fill="currentColor">
+                <svg width="12" viewBox="0 0 20 17" fill="currentColor">
                   <path d="M17.8246 7.4299H0V9.29145H17.8246L12.2047 16L13.6589 16.8982L19.4269 10.0128C20.191 9.10064 20.191 7.61838 19.4269 6.70622L13.809 0L12.3548 0.89587L17.8246 7.4299Z" />
                 </svg>
               </a>
               <a
                 href={`mailto:${profile.email}`}
-                className="inline-flex h-12 items-center gap-2 rounded-full border border-white/20 px-6 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-black"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-white/15 px-5 text-[13px] font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-black"
               >
                 <Icon name="email" className="h-3.5 w-3.5 fill-current" />
-                Direto no email
+                Email
               </a>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="timecode hidden text-right text-3xl font-medium text-white sm:block md:text-5xl">
-              <FrameCounter />
-            </div>
-            <div className="flex flex-wrap justify-end gap-2">
+            <div className="flex items-center gap-1.5">
               {profile.socials.slice(0, 4).map((s, i) => (
                 <a
                   key={i}
@@ -87,17 +87,17 @@ export function Hero({ hero, profile }: { hero: HeroContent; profile: ProfileCon
                   target={s.url.startsWith("http") ? "_blank" : undefined}
                   rel={s.url.startsWith("http") ? "noopener noreferrer" : undefined}
                   aria-label={s.label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-accent hover:bg-accent hover:text-black"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-accent hover:text-accent"
                 >
                   <Icon
                     name={s.icon as IconName}
-                    className="h-3.5 w-3.5 fill-current"
+                    className="h-3 w-3 fill-current"
                   />
                 </a>
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -111,34 +111,13 @@ function LiveClock() {
       const d = new Date();
       const hh = String(d.getHours()).padStart(2, "0");
       const mm = String(d.getMinutes()).padStart(2, "0");
-      const ss = String(d.getSeconds()).padStart(2, "0");
-      setTime(`${hh}:${mm}:${ss}`);
+      setTime(`São Paulo · ${hh}:${mm}`);
     };
     update();
-    const id = setInterval(update, 1000);
+    const id = setInterval(update, 30000);
     return () => clearInterval(id);
   }, []);
 
-  if (!time) return <span className="timecode">--:--:--</span>;
-  return <span className="timecode">SP · {time}</span>;
-}
-
-function FrameCounter() {
-  const [t, setT] = useState("00:00:00:00");
-
-  useEffect(() => {
-    const start = Date.now();
-    const id = setInterval(() => {
-      const ms = Date.now() - start;
-      const totalFrames = Math.floor((ms / 1000) * 30);
-      const ff = String(totalFrames % 30).padStart(2, "0");
-      const ss = String(Math.floor(ms / 1000) % 60).padStart(2, "0");
-      const mm = String(Math.floor(ms / 60000) % 60).padStart(2, "0");
-      const hh = String(Math.floor(ms / 3600000)).padStart(2, "0");
-      setT(`${hh}:${mm}:${ss}:${ff}`);
-    }, 33);
-    return () => clearInterval(id);
-  }, []);
-
-  return <>{t}</>;
+  if (!time) return <span className="timecode">São Paulo · --:--</span>;
+  return <span className="timecode">{time}</span>;
 }
