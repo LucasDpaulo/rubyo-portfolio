@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0A08;
+    --brown: #2A1E16;
+    --brown2: #3D2B1F;
+    --accent: #C4956A;
+    --cream: #E8DDD4;
+    --dim: #8A7A6E;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--cream); font-family:'DM Sans',sans-serif; font-weight:300; }
+
+  nav {
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(196,149,106,0.12);
+  }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:var(--accent); }
+  .nav-links { display:flex; gap:28px; list-style:none; }
+  .nav-links a { color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; transition:color .2s; }
+  .nav-links a:hover { color:var(--accent); }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    padding: 48px 40px;
+    align-items: center;
+    border-bottom: 1px solid rgba(196,149,106,0.12);
+  }
+
+  .profile-side { text-align:center; }
+
+  .avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--brown2);
+    display: flex; align-items:center; justify-content:center;
+    font-size: 32px;
+    margin: 0 auto 12px;
+    color: var(--accent);
+  }
+
+  .p-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:white; margin-bottom:4px; }
+  .p-role { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; }
+
+  .socials { display:flex; flex-direction:column; gap:6px; }
+  .soc-btn {
+    display:flex; align-items:center; gap:8px;
+    padding: 7px 12px;
+    border: 1px solid rgba(196,149,106,0.2);
+    border-radius:2px;
+    text-decoration:none;
+    color:var(--dim);
+    font-size:11px;
+    letter-spacing:1px;
+    transition:all .2s;
+  }
+  .soc-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .soc-btn svg { width:13px; height:13px; fill:currentColor; flex-shrink:0; }
+
+  .hero-text h1 {
+    font-family:'Bebas Neue',sans-serif;
+    font-size: clamp(48px,6vw,80px);
+    line-height:0.92;
+    color:white;
+    letter-spacing:2px;
+    margin-bottom:16px;
+  }
+  .hero-text h1 span { color:var(--accent); }
+  .hero-text p { font-size:14px; line-height:1.75; color:var(--dim); max-width:480px; }
+
+  .work { padding: 40px; }
+
+  .section-head {
+    display:flex; align-items:baseline; gap:16px; margin-bottom:24px;
+  }
+  .section-head h2 { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; color:white; }
+  .section-head span { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+
+  .v-short { grid-column: 1; grid-row: 1 / 3; aspect-ratio: 9/16; }
+  .v-long { grid-column: span 1; aspect-ratio: 16/9; }
+
+  .video-card {
+    background: var(--brown);
+    border: 1px solid rgba(196,149,106,0.12);
+    border-radius:3px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    transition:all .25s;
+    position:relative;
+    overflow:hidden;
+  }
+  .video-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+
+  .v-tag {
+    position:absolute; top:10px; left:10px;
+    font-size:9px; letter-spacing:1.5px; text-transform:uppercase;
+    padding: 3px 8px;
+    background: rgba(13,10,8,0.7);
+    border: 1px solid rgba(196,149,106,0.2);
+    border-radius:2px;
+    color:var(--accent);
+  }
+
+  .play {
+    width:40px; height:40px;
+    border: 1.5px solid var(--accent);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .25s;
+  }
+  .video-card:hover .play { background:var(--accent); }
+  .play svg { width:14px; height:14px; fill:var(--accent); margin-left:3px; }
+  .video-card:hover .play svg { fill:var(--bg); }
+
+  .v-num { font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:3px; color:var(--brown2); }
+
+  footer {
+    border-top: 1px solid rgba(196,149,106,0.12);
+    padding: 24px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+
+  .footer-contact { display:flex; gap:12px; flex-wrap:wrap; }
+
+  .fc {
+    display:flex; align-items:center; gap:6px;
+    padding: 8px 14px;
+    border: 1px solid rgba(196,149,106,0.15);
+    border-radius:2px;
+    text-decoration:none;
+    color:var(--dim);
+    font-size:11px;
+    letter-spacing:1px;
+    transition:all .2s;
+  }
+  .fc:hover { border-color:var(--accent); color:var(--accent); }
+  .fc svg { width:12px; height:12px; fill:currentColor; }
+
+  .footer-copy { font-size:11px; color:var(--brown2); letter-spacing:1px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">ROBERTO</div>
+  <ul class="nav-links">
+    <li><a href="#work">Trabalhos</a></li>
+    <li><a href="#contact">Contato</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="profile-side">
+    <div class="avatar">✦</div>
+    <div class="p-name">ROBERTO</div>
+    <div class="p-role">Editor · 1 ano</div>
+    <div class="socials">
+      <a href="https://x.com/rubyoroberto" target="_blank" class="soc-btn">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        @rubyoroberto
+      </a>
+      <a href="#" class="soc-btn">
+        <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.034.055a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        Discord
+      </a>
+      <a href="mailto:rubydefato@gmail.com" class="soc-btn">
+        <svg viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+        rubydefato@gmail.com
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-text">
+    <h1>EDITOR<br><span>DE VÍDEO</span><br>& CONTEÚDO</h1>
+    <p>Especialista em criação de conteúdo para YouTube, Reels e TikTok. Do corte à colorização — foco total no resultado.</p>
+  </div>
+</div>
+
+<div class="work" id="work">
+  <div class="section-head">
+    <h2>TRABALHOS</h2>
+    <span>Short Form + Long Form</span>
+  </div>
+
+  <div class="videos-grid">
+    <div class="video-card v-short">
+      <span class="v-tag">9:16 · Short</span>
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="v-num">SHORT FORM</span>
+    </div>
+    <div class="video-card v-long">
+      <span class="v-tag">16:9 · Long</span>
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="v-num">01</span>
+    </div>
+    <div class="video-card v-long">
+      <span class="v-tag">16:9 · Long</span>
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="v-num">02</span>
+    </div>
+    <div class="video-card v-long">
+      <span class="v-tag">16:9 · Long</span>
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="v-num">03</span>
+    </div>
+    <div class="video-card v-long">
+      <span class="v-tag">16:9 · Long</span>
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="v-num">04</span>
+    </div>
+  </div>
+</div>
+
+<footer id="contact">
+  <div class="footer-contact">
+    <a href="https://x.com/rubyoroberto" target="_blank" class="fc">
+      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      @rubyoroberto
+    </a>
+    <a href="#" class="fc">
+      <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.034.055a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Discord
+    </a>
+    <a href="mailto:rubydefato@gmail.com" class="fc">
+      <svg viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+      rubydefato@gmail.com
+    </a>
+  </div>
+  <div class="footer-copy">© 2026 · ROBERTO</div>
+</footer>
+
+</body>
+</html>
