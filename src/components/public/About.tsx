@@ -1,56 +1,75 @@
 import { FadeIn } from "@/components/transitions/FadeIn";
 import type { ProfileContent } from "@/lib/validators";
 
+const MARKERS = [
+  { label: "Foco", value: "YouTube · Reels · TikTok", color: "#FF3D00" },
+  { label: "Formato", value: "Short + Long form", color: "#00FF66" },
+  { label: "Software", value: "Premiere · DaVinci", color: "#FFD500" },
+  { label: "Resposta", value: "Em até 24h", color: "#49B3FC" },
+];
+
 export function About({ profile }: { profile: ProfileContent }) {
   return (
     <section
       id="about"
-      className="border-t border-ink/10 px-5 py-20 sm:px-10 sm:py-28 lg:px-[52px]"
+      className="relative border-t border-white/5 px-5 py-20 sm:px-8 sm:py-28"
     >
-      <FadeIn className="mx-auto grid max-w-[1700px] grid-cols-1 gap-10 md:grid-cols-12 md:gap-16">
-        <div className="md:col-span-4 lg:col-span-3">
-          <span className="mb-3 block text-xs uppercase tracking-[3px] text-ink/60">
-            Sobre
-          </span>
-          <p className="font-display text-4xl leading-none text-ink">
-            {profile.name}.
-          </p>
-          <p className="mt-1 text-sm uppercase tracking-[2px] text-accent">
-            {profile.role}
-          </p>
+      <div className="mx-auto max-w-[1700px]">
+        <div className="mb-10 flex items-center gap-2 text-[11px] uppercase tracking-[3px] text-white/50">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          Bin 02 · Sobre
         </div>
 
-        <div className="md:col-span-8 lg:col-span-7 lg:col-start-5">
-          <p className="text-2xl font-light leading-snug text-ink sm:text-3xl">
-            Edito vídeo para criadores de conteúdo que querem{" "}
-            <span className="font-medium text-accent">
-              ritmo, intenção e identidade
-            </span>{" "}
-            — não só corte. Cuido do projeto do começo ao fim: do roteiro
-            visual à colorização final.
-          </p>
-
-          <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
-            <Stat label="Foco" value="YouTube · Reels · TikTok" />
-            <Stat label="Formato" value="Short + Long form" />
-            <Stat label="Software" value="Premiere · DaVinci" />
-            <Stat label="Resposta" value="Em até 24h" />
+        <FadeIn className="grid grid-cols-1 gap-12 md:grid-cols-12">
+          <div className="md:col-span-4">
+            <p className="font-display text-5xl font-extrabold uppercase text-white">
+              {profile.name}<span className="text-accent">.</span>
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-[2px] text-white/60">
+              {profile.role}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {MARKERS.map((m) => (
+                <span
+                  key={m.label}
+                  className="marker"
+                  style={{ ["--marker-color" as string]: m.color }}
+                >
+                  {m.label}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <span className="mb-1 block text-[11px] uppercase tracking-[2px] text-ink/50">
-        {label}
-      </span>
-      <span className="text-sm font-medium leading-tight text-ink">
-        {value}
-      </span>
-    </div>
+          <div className="md:col-span-8">
+            <p className="text-2xl font-light leading-snug text-white sm:text-3xl md:text-4xl">
+              Eu corto pra criadores que querem{" "}
+              <span className="font-medium text-accent italic">
+                ritmo, intenção
+              </span>{" "}
+              e identidade — não só limpeza.
+            </p>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
+              Cuido do projeto do começo ao fim. Recebo o material bruto, mapeio
+              a narrativa, escolho o ritmo e devolvo o vídeo pronto pra publicar.
+              Faço o que aparece no feed, não o que tava no template do free.
+            </p>
+
+            <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
+              {MARKERS.map((m) => (
+                <div key={m.label} className="border-l-2 pl-4" style={{ borderColor: m.color }}>
+                  <span className="mb-1 block text-[10px] uppercase tracking-[2px] text-white/50">
+                    {m.label}
+                  </span>
+                  <span className="text-sm font-medium leading-tight text-white">
+                    {m.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
   );
 }

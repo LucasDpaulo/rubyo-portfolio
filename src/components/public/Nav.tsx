@@ -1,40 +1,41 @@
 export function Nav({ logo }: { logo: string }) {
   return (
-    <header className="sticky top-0 z-30 bg-bg/95 backdrop-blur supports-[backdrop-filter]:bg-bg/80">
-      <div className="mx-auto flex items-center justify-between px-5 py-4 sm:px-10 lg:px-[52px]">
+    <header className="sticky top-0 z-30 border-b border-white/5 bg-bg/85 backdrop-blur">
+      <div className="mx-auto flex max-w-[1700px] items-center justify-between px-5 py-4 sm:px-8">
         <a
           href="#top"
-          className="font-display text-2xl font-extrabold tracking-tight text-ink"
+          className="font-display text-2xl font-extrabold uppercase tracking-tight text-ink"
         >
-          {logo}.
+          {logo}<span className="text-accent">.</span>
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
           <a
             href="#work"
-            className="text-sm font-medium text-ink/70 transition-colors hover:text-ink"
+            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
           >
-            Trabalhos
+            01 · Trabalhos
           </a>
           <a
             href="#about"
-            className="text-sm font-medium text-ink/70 transition-colors hover:text-ink"
+            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
           >
-            Sobre
+            02 · Sobre
           </a>
           <a
             href="#contact"
-            className="text-sm font-medium text-ink/70 transition-colors hover:text-ink"
+            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
           >
-            Contato
+            03 · Contato
           </a>
         </nav>
 
         <a
           href="#contact"
-          className="inline-flex h-10 items-center rounded-full bg-ink px-5 text-xs font-medium text-bg transition-colors hover:bg-accent"
+          className="group inline-flex h-10 items-center gap-2 rounded-full bg-accent px-5 text-xs font-medium uppercase tracking-[1.5px] text-black transition-transform hover:scale-[1.03]"
         >
-          Contratar
+          <span className="h-1.5 w-1.5 rounded-full bg-black" />
+          Disponível
         </a>
       </div>
     </header>

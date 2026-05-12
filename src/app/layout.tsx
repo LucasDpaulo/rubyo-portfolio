@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Inter_Tight } from "next/font/google";
+import { Syne, Inter_Tight } from "next/font/google";
 import "./globals.css";
 
-const bebas = Bebas_Neue({
-  variable: "--font-bebas",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 const inter = Inter_Tight({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Roberto · Editor de Vídeo",
   description:
-    "Portfólio de Roberto — editor de vídeo especialista em YouTube, Reels e TikTok.",
+    "Editor de vídeo para criadores que dominam a cultura digital. Short + long form, ritmo e intenção.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${bebas.variable} ${inter.variable}`}>
+    <html lang="pt-BR" className={`${syne.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   );
