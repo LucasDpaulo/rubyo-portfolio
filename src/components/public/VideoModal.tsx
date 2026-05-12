@@ -36,7 +36,7 @@ export function VideoModal({ provider, videoId, title, aspectRatio, onClose }: P
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-bg/90 p-6 backdrop-blur"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-6 backdrop-blur-md"
         onClick={onClose}
       >
         <motion.div
@@ -44,19 +44,19 @@ export function VideoModal({ provider, videoId, title, aspectRatio, onClose }: P
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.96, opacity: 0 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className={`relative w-full ${isShort ? "max-w-[360px]" : "max-w-[960px]"}`}
+          className={`relative w-full ${isShort ? "max-w-[360px]" : "max-w-[1100px]"}`}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="absolute -top-10 right-0 text-xs uppercase tracking-[2px] text-dim hover:text-accent"
+            className="absolute -top-12 right-0 inline-flex h-10 items-center gap-2 rounded-full bg-bg/10 px-4 text-xs uppercase tracking-[2px] text-bg backdrop-blur transition-colors hover:bg-bg hover:text-ink"
           >
             Fechar ✕
           </button>
           <div
-            className={`overflow-hidden rounded border border-accent/20 bg-brown ${
+            className={`overflow-hidden rounded-2xl bg-black shadow-2xl ${
               isShort ? "aspect-[9/16]" : "aspect-video"
             }`}
           >

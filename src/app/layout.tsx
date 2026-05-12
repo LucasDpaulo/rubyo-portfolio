@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, DM_Sans } from "next/font/google";
+import { Bebas_Neue, Inter_Tight } from "next/font/google";
 import "./globals.css";
 
 const bebas = Bebas_Neue({
@@ -9,10 +9,10 @@ const bebas = Bebas_Neue({
   display: "swap",
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const inter = Inter_Tight({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${bebas.variable} ${dmSans.variable}`}>
+    <html lang="pt-BR" className={`${bebas.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   );

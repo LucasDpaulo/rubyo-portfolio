@@ -1,15 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0D0A08;
+  /* light editorial palette (awwwards-inspired) */
+  --color-bg: #F8F8F8;
+  --color-surface: #FFFFFF;
+  --color-ink: #222222;
+  --color-muted: #7A7A7A;
+  --color-line: #E5E5E5;
+  --color-accent: #FA5D29;
+
+  /* legacy keep for any leftover references */
   --color-brown: #2A1E16;
   --color-brown2: #3D2B1F;
-  --color-accent: #C4956A;
   --color-cream: #E8DDD4;
-  --color-dim: #8A7A6E;
+  --color-dim: #7A7A7A;
 
   --font-display: var(--font-bebas);
-  --font-sans: var(--font-dm-sans);
+  --font-sans: var(--font-inter);
+
+  --inner-max: 1816px;
+  --inner-pad: 52px;
 }
 
 * {
@@ -18,12 +28,21 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  font-size: 14px;
+}
+
 body {
   background: var(--color-bg);
-  color: var(--color-cream);
-  font-family: var(--font-dm-sans), sans-serif;
+  color: var(--color-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 300;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 a {
@@ -44,4 +63,42 @@ textarea,
 select {
   font-family: inherit;
   color: inherit;
+}
+
+/* dotted divider used in editorial section heads/footer */
+.dotted-line {
+  background-image: linear-gradient(
+    to right,
+    var(--color-ink) 0 10%,
+    rgba(255, 255, 255, 0) 10%
+  );
+  background-size: 8px 1px;
+  background-repeat: repeat-x;
+  background-position: bottom;
+}
+
+/* underline link (animated, awwwards-style) */
+.link-underlined {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}
+.link-underlined::before {
+  content: "";
+  position: absolute;
+  bottom: -0.2em;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: linear-gradient(
+    to right,
+    currentColor 45%,
+    rgba(0, 0, 0, 0.3) 55%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 50%;
+  transition: background-position 0.4s ease-out;
+}
+.link-underlined:hover::before {
+  background-position: 0% 50%;
 }

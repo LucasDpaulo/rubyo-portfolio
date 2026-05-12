@@ -1,27 +1,42 @@
 export function Nav({ logo }: { logo: string }) {
   return (
-    <nav className="flex items-center justify-between border-b border-accent/10 px-5 py-4 sm:px-10">
-      <div className="font-display text-lg tracking-[3px] text-accent sm:text-xl">
-        {logo}
-      </div>
-      <ul className="flex list-none gap-5 sm:gap-7">
-        <li>
+    <header className="sticky top-0 z-30 bg-bg/95 backdrop-blur supports-[backdrop-filter]:bg-bg/80">
+      <div className="mx-auto flex items-center justify-between px-5 py-4 sm:px-10 lg:px-[52px]">
+        <a
+          href="#top"
+          className="font-display text-2xl font-extrabold tracking-tight text-ink"
+        >
+          {logo}.
+        </a>
+
+        <nav className="hidden items-center gap-8 md:flex">
           <a
             href="#work"
-            className="text-[11px] uppercase tracking-[1.5px] text-dim transition-colors hover:text-accent sm:text-xs"
+            className="text-sm font-medium text-ink/70 transition-colors hover:text-ink"
           >
             Trabalhos
           </a>
-        </li>
-        <li>
+          <a
+            href="#about"
+            className="text-sm font-medium text-ink/70 transition-colors hover:text-ink"
+          >
+            Sobre
+          </a>
           <a
             href="#contact"
-            className="text-[11px] uppercase tracking-[1.5px] text-dim transition-colors hover:text-accent sm:text-xs"
+            className="text-sm font-medium text-ink/70 transition-colors hover:text-ink"
           >
             Contato
           </a>
-        </li>
-      </ul>
-    </nav>
+        </nav>
+
+        <a
+          href="#contact"
+          className="inline-flex h-10 items-center rounded-full bg-ink px-5 text-xs font-medium text-bg transition-colors hover:bg-accent"
+        >
+          Contratar
+        </a>
+      </div>
+    </header>
   );
 }
