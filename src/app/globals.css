@@ -1,27 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* Raw Rhythm palette */
-  --color-bg: #000000;
-  --color-surface: #1A1A1A;
-  --color-surface-2: #0F0F0F;
-  --color-ink: #FFFFFF;
-  --color-muted: #A1A1A1;
-  --color-dim: #4E4E4E;
-  --color-line: #2A2A2A;
-  --color-accent: #FF3D00;
+  /* light editorial palette (awwwards-inspired) */
+  --color-bg: #F8F8F8;
+  --color-surface: #FFFFFF;
+  --color-ink: #222222;
+  --color-muted: #7A7A7A;
+  --color-line: #E5E5E5;
+  --color-accent: #FA5D29;
 
-  /* Legacy keep for any leftover references */
-  --color-brown: #1A1A1A;
-  --color-brown2: #2A2A2A;
-  --color-cream: #FFFFFF;
+  /* legacy keep for any leftover references */
+  --color-brown: #2A1E16;
+  --color-brown2: #3D2B1F;
+  --color-cream: #E8DDD4;
+  --color-dim: #7A7A7A;
 
-  --font-display: var(--font-syne);
+  --font-display: var(--font-bebas);
   --font-sans: var(--font-inter);
-  --font-bebas: var(--font-syne);
 
   --inner-max: 1816px;
-  --inner-pad: 32px;
+  --inner-pad: 52px;
 }
 
 * {
@@ -33,7 +31,6 @@
 html {
   scroll-behavior: smooth;
   font-size: 14px;
-  background: #000;
 }
 
 body {
@@ -41,12 +38,11 @@ body {
   color: var(--color-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
-  position: relative;
 }
 
 a {
@@ -69,64 +65,40 @@ select {
   color: inherit;
 }
 
-/* film grain overlay applied via fixed pseudo-element */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='1'/></svg>");
-  animation: grainShift 0.8s steps(6) infinite;
+/* dotted divider used in editorial section heads/footer */
+.dotted-line {
+  background-image: linear-gradient(
+    to right,
+    var(--color-ink) 0 10%,
+    rgba(255, 255, 255, 0) 10%
+  );
+  background-size: 8px 1px;
+  background-repeat: repeat-x;
+  background-position: bottom;
 }
 
-@keyframes grainShift {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-2%, -3%); }
-  20% { transform: translate(-4%, 2%); }
-  30% { transform: translate(2%, -4%); }
-  40% { transform: translate(-1%, 3%); }
-  50% { transform: translate(-3%, 1%); }
-  60% { transform: translate(3%, -1%); }
-  70% { transform: translate(1%, 4%); }
-  80% { transform: translate(-2%, -2%); }
-  90% { transform: translate(2%, 1%); }
-}
-
-/* hairline divider used in editorial section heads */
-.hairline {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* premiere marker style chip */
-.marker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 10px 4px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+/* underline link (animated, awwwards-style) */
+.link-underlined {
+  position: relative;
+  display: inline-block;
   line-height: 1;
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
 }
-.marker::before {
+.link-underlined::before {
   content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--marker-color, var(--color-accent));
-  transform: rotate(45deg);
-  flex-shrink: 0;
+  position: absolute;
+  bottom: -0.2em;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: linear-gradient(
+    to right,
+    currentColor 45%,
+    rgba(0, 0, 0, 0.3) 55%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 50%;
+  transition: background-position 0.4s ease-out;
 }
-
-/* timecode text style */
-.timecode {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
+.link-underlined:hover::before {
+  background-position: 0% 50%;
 }
