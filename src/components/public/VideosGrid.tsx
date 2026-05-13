@@ -1,6 +1,34 @@
+"use client";
+
+import { useState } from "react";
 import type { Video } from "@prisma/client";
 import { VideoCard } from "@/components/public/VideoCard";
 import { Reveal } from "@/components/transitions/Reveal";
+
+type LayoutMode = "default" | "grid" | "list";
+
+function LayoutToggle({ mode, onToggle }: { mode: LayoutMode; onToggle: () => void }) {
+  const isList = mode === "list";
+  return (
+    <button
+      type="button"
+      className="toggle-layout-btn"
+      onClick={onToggle}
+      title={isList ? "Ver em grade" : "Ver em lista"}
+      aria-label={isList ? "Ver em grade" : "Ver em lista"}
+    >
+      {isList ? (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" />
+        </svg>
+      )}
+    </button>
+  );
+}
 
 export function VideosGrid({
   videos,
@@ -12,11 +40,22 @@ export function VideosGrid({
   const shorts = videos.filter((v) => v.aspectRatio === "9:16");
   const longs = videos.filter((v) => v.aspectRatio !== "9:16");
 
+  const [longsMode, setLongsMode] = useState<LayoutMode>("default");
+
+  const longsClass =
+    longsMode === "grid"
+      ? "vsl-stack layout-grid"
+      : longsMode === "list"
+        ? "vsl-stack layout-list"
+        : "vsl-stack";
+
   return (
     <section id="work" className="work">
       {shorts.length > 0 && (
         <Reveal>
-          <span className="section-label">TikTok / Shorts</span>
+          <div className="section-header">
+            <span className="section-label">TikTok / Shorts</span>
+          </div>
           <div className="short-section">
             {shorts.map((v) => (
               <VideoCard key={v.id} video={v} variant="short" isAdmin={isAdmin} />
@@ -27,8 +66,16 @@ export function VideosGrid({
 
       {longs.length > 0 && (
         <Reveal style={{ marginTop: "2rem" }}>
-          <span className="section-label">Long Form</span>
-          <div className="vsl-stack">
+          <div className="section-header">
+            <span className="section-label">Long Form</span>
+            <LayoutToggle
+              mode={longsMode}
+              onToggle={() =>
+                setLongsMode((m) => (m === "grid" ? "list" : "grid"))
+              }
+            />
+          </div>
+          <div className={longsClass}>
             {longs.map((v) => (
               <VideoCard key={v.id} video={v} variant="long" isAdmin={isAdmin} />
             ))}
