@@ -683,7 +683,10 @@ select {
   max-width: 100%;
 }
 .profile-card .editable-wrapper {
-  margin-bottom: 1.2rem;
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 1.2rem;
 }
 .profile-card .editable-wrapper:last-child {
   margin-bottom: 0;
