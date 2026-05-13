@@ -14,11 +14,11 @@ async function main() {
   const profile = {
     name: "ROBERTO",
     role: "Content Editor",
-    email: "rubydefato@gmail.com",
+    email: "roberto@gmail.com",
     socials: [
       { label: "@rubyoroberto", url: "https://x.com/rubyoroberto", icon: "x" },
       { label: "rubyroberto_editor", url: "#", icon: "discord" },
-      { label: "rubydefato@gmail.com", url: "mailto:rubydefato@gmail.com", icon: "email" },
+      { label: "roberto@gmail.com", url: "mailto:roberto@gmail.com", icon: "email" },
     ],
   };
 
