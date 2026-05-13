@@ -7,6 +7,7 @@ export const DEFAULT_HERO: HeroContent = {
   titleLine3: "& CONTEÚDO",
   description:
     "Especialista em criação de conteúdo para YouTube, Reels e TikTok. Do corte à colorização — foco total no resultado.",
+  bgVideoId: "",
 };
 
 export const DEFAULT_PROFILE: ProfileContent = {

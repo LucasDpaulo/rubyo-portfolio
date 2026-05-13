@@ -25,7 +25,7 @@ export default function LoginPage() {
     });
     setLoading(false);
     if (res?.error) {
-      setError("Email ou senha incorretos.");
+      setError("Usuário ou senha incorretos.");
       return;
     }
     router.push(callbackUrl);
@@ -45,14 +45,14 @@ export default function LoginPage() {
 
         <label className="mb-4 block">
           <span className="mb-1 block text-[11px] uppercase tracking-[1.5px] text-dim">
-            Email
+            Usuário
           </span>
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            autoComplete="email"
+            autoComplete="username"
             className="w-full rounded-sm border border-accent/20 bg-bg px-3 py-2 text-sm text-cream outline-none focus:border-accent"
           />
         </label>

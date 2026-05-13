@@ -18,6 +18,7 @@ export const heroSchema = z.object({
   titleLine2: z.string().max(40),
   titleLine3: z.string().max(40),
   description: z.string().max(400),
+  bgVideoId: z.string().max(40).optional().default(""),
 });
 
 export const socialSchema = z.object({
@@ -34,7 +35,7 @@ export const profileSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1).max(120),
   password: z.string().min(1),
 });
 

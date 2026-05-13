@@ -5,7 +5,11 @@ import { prisma } from "@/lib/db";
 import { loginSchema } from "@/lib/validators";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 60 * 24 * 90,
+    updateAge: 60 * 60 * 24,
+  },
   pages: { signIn: "/admin/login" },
   trustHost: true,
   providers: [

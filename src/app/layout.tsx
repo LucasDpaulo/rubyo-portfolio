@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Inter_Tight } from "next/font/google";
+import { Bebas_Neue, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const bebas = Bebas_Neue({
@@ -9,17 +9,17 @@ const bebas = Bebas_Neue({
   display: "swap",
 });
 
-const inter = Inter_Tight({
-  variable: "--font-inter",
+const dm = DM_Sans({
+  variable: "--font-dm",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Roberto · Editor de Vídeo",
+  title: "Roberto · Content Editor",
   description:
-    "Portfólio de Roberto — editor de vídeo especialista em YouTube, Reels e TikTok.",
+    "Portfólio de Roberto — content editor focado em shorts e long form.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${bebas.variable} ${inter.variable}`}>
+    <html lang="pt-BR" className={`${bebas.variable} ${dm.variable}`}>
       <body>{children}</body>
     </html>
   );
