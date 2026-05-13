@@ -48,28 +48,47 @@ reference/
 
 | Branch | Estado atual | URL | Quando atualizar |
 |---|---|---|---|
-| `main` | **Produção** — versão dark marrom/cream/dourado original | https://rubyo.vercel.app | Só após aprovação visual local |
-| `dev` | Versão Awwwards light editorial (laranja, hero centralizado) | — (rodar local) | Sandbox de iteração visual |
+| `main` | **Produção** — versão dark marrom/cream/dourado original | https://rubyo.vercel.app | Trabalhar direto aqui (usuário não quer iterar local mais) |
+| `dev` | Versão Awwwards light editorial (laranja, hero centralizado) | — | Histórico, não em uso ativo |
 
-**Fluxo de trabalho preferido pelo usuário:**
+**Fluxo atual (2026-05-13 em diante):**
 
-1. `git checkout dev` → mudanças → `npm run dev` → revisar em `localhost:3000`
-2. Iterar até aprovar visualmente
-3. `git checkout main && git merge dev && git push origin main`
-4. Vercel deploya automático em `rubyo.vercel.app`
+1. Editar direto em `main` → `git push origin main`
+2. Vercel deploya automático (mas alias precisa atualizar manual, ver abaixo)
+3. **SEMPRE** rodar `vercel alias set <novo-deploy-url> rubyo.vercel.app` após cada deploy — auto-alias está quebrado
 
-⚠️ **NÃO criar previews na Vercel** (aliases tipo `rubyo-dev.vercel.app`). O usuário não gosta — polui a conta. Sempre iterar local.
+⚠️ **NÃO criar previews na Vercel** (aliases tipo `rubyo-dev.vercel.app`). O usuário não gosta — polui a conta.
+
+⚠️ **Alias manual sempre.** Após `git push`, esperar deploy ficar Ready (`vercel ls`) e fazer:
+```bash
+vercel alias set ruby-<hash>-lucashs-projects.vercel.app rubyo.vercel.app
+```
+Sem isso, o site público continua mostrando o deploy anterior.
 
 ## Comandos
 
 ```bash
-npm run dev              # localhost:3000
-npm run build            # build de produção
-npm run db:migrate       # prisma migrate dev
-npm run db:deploy        # prisma migrate deploy (prod)
-npm run db:seed          # popula admin + hero/profile + vídeos
-npm run db:studio        # Prisma Studio
-docker compose up -d     # Postgres local em :5432
+npm run dev                    # localhost:3000
+npm run build                  # build de produção
+npm run db:migrate             # prisma migrate dev
+npm run db:deploy              # prisma migrate deploy (prod)
+npm run db:seed                # popula admin + hero/profile + vídeos
+npm run db:reset-admin         # reseta email/senha do admin pra roberto@gmail.com / editor
+npm run db:studio              # Prisma Studio
+```
+
+⚠️ **Não rodar Docker local** (`docker compose up`). Problemas de prod-só agora — validar tudo direto no Neon via `DATABASE_URL` apontando pra prod.
+
+## Acesso a prod (Neon)
+
+Neon CLI (`neonctl`) instalado e autenticado. Pra pegar a URL ou rodar SQL sem abrir painel:
+
+```bash
+# URL unpooled
+neon connection-string --project-id shy-cell-56903702 --org-id org-gentle-pond-43389937 --pooled false
+
+# rodar script Prisma contra prod
+DATABASE_URL="$(neon connection-string --project-id shy-cell-56903702 --org-id org-gentle-pond-43389937 --pooled false)" npm run <script>
 ```
 
 ## Variáveis de ambiente
@@ -79,9 +98,14 @@ docker compose up -d     # Postgres local em :5432
 
 ## Admin
 
-- Login: `roberto@gmail.com` / senha `editor` (trocar pelo painel `/admin/conta` se quiser)
-- Abas: Vídeos (CRUD + drag-reorder), Hero, Perfil, Conta (trocar senha)
-- Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer query
+Login: `roberto@gmail.com` / senha `editor` (trocar pelo painel `/admin/conta`).
+
+**Dois fluxos pra editar conteúdo:**
+
+1. **Inline na home** (preferido) — depois de logar, clicar no logo "ROBERTO" do nav abre o modal de login. Logado, aparecem botões ✏️ em cada elemento editável (nome, título, descrição, vídeo de fundo, social links, cards de vídeo). Cards de vídeo também ganham um botão "+" no header de cada seção (Shorts / Long Form) pra adicionar novos vídeos inline. Long Form tem ainda um toggle grid↔lista pra alternar visual.
+2. **Painel `/admin`** — abas: Vídeos (CRUD + drag-reorder), Hero, Perfil, Conta (trocar senha).
+
+Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer query.
 
 ## Decisões técnicas tomadas
 
@@ -92,6 +116,7 @@ docker compose up -d     # Postgres local em :5432
 - **Build command na Vercel**: `prisma generate && next build` (migrate roda separado via `npm run db:deploy`)
 - **Postgres Neon** integrado pela Vercel (env vars prefixadas `Ruby_*` foram criadas automaticamente, mas usamos `DATABASE_URL` adicionada manualmente apontando pro mesmo DB)
 - **Tailwind 4** com `@theme {}` (não `tailwind.config.ts`) — convention nova
+- **next/font com `adjustFontFallback: false`** — sem isso, o fallback metric-adjusted (Arial) deixava o ROBERTO do nav perceptivelmente mais "fino" antes do Bebas Neue swap. Desligar evita esse FOUC visual
 
 ## Histórico de design (resumo)
 
