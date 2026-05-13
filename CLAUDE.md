@@ -79,7 +79,7 @@ docker compose up -d     # Postgres local em :5432
 
 ## Admin
 
-- Login: `https://rubyo.vercel.app/admin/login` (email `rms.empreendimento@gmail.com`, senha trocada pelo painel `/admin/conta`)
+- Login: `roberto@gmail.com` / senha `editor` (trocar pelo painel `/admin/conta` se quiser)
 - Abas: Vídeos (CRUD + drag-reorder), Hero, Perfil, Conta (trocar senha)
 - Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer query
 
