@@ -419,7 +419,14 @@ select {
   letter-spacing: 1px;
 }
 
-.toggle-layout-btn {
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-layout-btn,
+.add-video-btn {
   background: transparent;
   border: 1px solid rgba(196, 149, 106, 0.3);
   color: var(--color-accent);
@@ -432,7 +439,14 @@ select {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.toggle-layout-btn:hover {
+.add-video-btn {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding-bottom: 4px;
+}
+.toggle-layout-btn:hover,
+.add-video-btn:hover {
   background: rgba(196, 149, 106, 0.15);
   border-color: var(--color-accent);
   transform: translateY(-2px);

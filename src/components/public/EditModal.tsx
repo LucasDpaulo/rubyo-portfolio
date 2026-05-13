@@ -24,6 +24,8 @@ function titleFor(p: EditPayload): string {
       return "EDITAR LINKS";
     case "project":
       return `EDITAR VÍDEO: ${p.video.title.toUpperCase()}`;
+    case "new-video":
+      return p.aspectRatio === "9:16" ? "NOVO SHORT" : "NOVO LONG FORM";
   }
 }
 
@@ -58,6 +60,8 @@ function initialFields(p: EditPayload): Fields {
         url: p.video.url,
         tag: p.video.tag ?? "",
       };
+    case "new-video":
+      return { title: "", url: "", tag: "" };
   }
 }
 
@@ -112,6 +116,22 @@ async function save(p: EditPayload, fields: Fields): Promise<void> {
     };
     const res = await fetch(`/api/admin/videos/${v.id}`, {
       method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return;
+  }
+
+  if (p.type === "new-video") {
+    const body = {
+      title: fields.title,
+      url: fields.url,
+      tag: fields.tag || null,
+      aspectRatio: p.aspectRatio,
+    };
+    const res = await fetch(`/api/admin/videos`, {
+      method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
     });
@@ -205,6 +225,7 @@ function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string
         </>
       );
     case "project":
+    case "new-video":
       return (
         <>
           <label className="admin-label">Título</label>
@@ -216,6 +237,7 @@ function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string
           <label className="admin-label">URL (YouTube/Vimeo)</label>
           <input
             className="admin-input"
+            placeholder="https://www.youtube.com/watch?v=..."
             value={fields.url}
             onChange={(e) => set("url", e.target.value)}
           />
