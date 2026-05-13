@@ -135,3 +135,28 @@ Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer qu
 - Não inventar nova direção visual sem confirmar — refinar a existente
 - Não comitar `.env*` (já no .gitignore, mas vale o lembrete)
 - Não usar credenciais em chat/logs — usuário já colou credenciais Neon expostas; rotacionar se precisar
+
+## Última sessão (2026-05-13)
+
+**O que foi feito:**
+- Reset do admin no Neon prod: email `rms.empreendimento@gmail.com` → `roberto@gmail.com`, senha `editor`. Script `scripts/reset-admin.ts` + comando `npm run db:reset-admin`
+- Instalado + autenticado `neonctl` global. Projeto Ruby: `org-gentle-pond-43389937` / `shy-cell-56903702`
+- CSS fix: profile-card empilha nome/cargo/social (`display: flex` + `width: fit-content` em `.editable-wrapper`)
+- Avatar simplificado pra sempre mostrar inicial em texto (removida tentativa de carregar `/avatar.jpg` inexistente)
+- Voltou pra `next/font` com `adjustFontFallback: false` (tentativa intermediária com `<link>` direto quebrou hidratação)
+- Toggle grid/lista no Long Form (botão de ícone no header da seção)
+- Botão `+` inline pra admin adicionar Shorts/Long Form direto da home (sem ir no `/admin/videos`). `EditPayload` ganhou variante `new-video`, `EditModal` faz `POST /api/admin/videos`
+- Memory + CLAUDE.md atualizados com novo workflow (sem dev local, alias Vercel manual)
+
+**Estado atual:**
+- Último commit: `0c803f4` (docs: CLAUDE.md update) — push e deploy feitos
+- Alias `rubyo.vercel.app` aponta pro deploy mais recente
+- Site funcional: login ok, edição inline + painel `/admin`, adicionar/editar/reordenar vídeos, toggle de layout
+
+**Próximos passos discutidos mas não feitos:**
+- Roberto pode/vai editar conteúdo (textos hero, role "EDITOR · 1 ANO" → "CONTENT EDITOR", videos reais, etc) pelo próprio painel
+- Nenhuma feature técnica pendente
+
+**Fios soltos:**
+- `.gitignore` foi modificado (adicionado `.env*.local`) — está commitado
+- Branch `dev` continua com a v1 Awwwards mas não está em uso ativo
