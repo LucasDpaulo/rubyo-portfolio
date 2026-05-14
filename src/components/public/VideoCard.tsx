@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Video } from "@prisma/client";
 import { EditButton } from "@/components/public/EditButton";
+import { ReorderArrows } from "@/components/public/ReorderArrows";
 
 type Variant = "short" | "long";
 
@@ -10,10 +11,14 @@ export function VideoCard({
   video,
   variant,
   isAdmin = false,
+  prevId = null,
+  nextId = null,
 }: {
   video: Video;
   variant: Variant;
   isAdmin?: boolean;
+  prevId?: string | null;
+  nextId?: string | null;
 }) {
   const [playing, setPlaying] = useState(false);
 
@@ -92,6 +97,14 @@ export function VideoCard({
         <div className="card-edit">
           <EditButton payload={{ type: "project", video }} label="Editar vídeo" />
         </div>
+      )}
+      {isAdmin && (
+        <ReorderArrows
+          id={video.id}
+          prevId={prevId}
+          nextId={nextId}
+          direction={variant === "short" ? "horizontal" : "vertical"}
+        />
       )}
     </div>
   );

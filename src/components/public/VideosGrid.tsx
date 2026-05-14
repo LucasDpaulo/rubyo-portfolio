@@ -82,8 +82,15 @@ export function VideosGrid({
             </div>
           </div>
           <div className="short-section">
-            {shorts.map((v) => (
-              <VideoCard key={v.id} video={v} variant="short" isAdmin={isAdmin} />
+            {shorts.map((v, i) => (
+              <VideoCard
+                key={v.id}
+                video={v}
+                variant="short"
+                isAdmin={isAdmin}
+                prevId={i > 0 ? shorts[i - 1].id : null}
+                nextId={i < shorts.length - 1 ? shorts[i + 1].id : null}
+              />
             ))}
           </div>
         </Reveal>
@@ -104,8 +111,15 @@ export function VideosGrid({
             </div>
           </div>
           <div className={longsClass}>
-            {longs.map((v) => (
-              <VideoCard key={v.id} video={v} variant="long" isAdmin={isAdmin} />
+            {longs.map((v, i) => (
+              <VideoCard
+                key={v.id}
+                video={v}
+                variant="long"
+                isAdmin={isAdmin}
+                prevId={i > 0 ? longs[i - 1].id : null}
+                nextId={i < longs.length - 1 ? longs[i + 1].id : null}
+              />
             ))}
           </div>
         </Reveal>
