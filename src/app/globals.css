@@ -363,7 +363,8 @@ select {
 }
 
 .hero-content h1 {
-  font-family: var(--font-anton), "Anton", "Bebas Neue", sans-serif;
+  font-family: var(--font-anton), "Archivo Black", "Bebas Neue", sans-serif;
+  font-weight: 900;
   font-size: clamp(3rem, 8vw, 6.5rem);
   line-height: 0.85;
   letter-spacing: 1px;
