@@ -34,10 +34,32 @@ export async function POST(req: Request) {
       req.headers.get("cf-ipcountry") ||
       null;
 
-    await prisma.visit.create({
+    const v = await prisma.visit.create({
       data: { path, fingerprint: fp, country },
+      select: { id: true },
     });
 
+    return NextResponse.json({ ok: true, id: v.id });
+  } catch {
+    return NextResponse.json({ ok: false }, { status: 200 });
+  }
+}
+
+const MAX_DURATION_MS = 60 * 60 * 1000;
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const id = typeof body?.id === "string" ? body.id : "";
+    const durationMs = Number(body?.durationMs);
+    if (!id || !Number.isFinite(durationMs) || durationMs < 0) {
+      return NextResponse.json({ ok: false }, { status: 200 });
+    }
+    const clamped = Math.min(MAX_DURATION_MS, Math.round(durationMs));
+    await prisma.visit.update({
+      where: { id },
+      data: { durationMs: clamped },
+    }).catch(() => {});
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ ok: false }, { status: 200 });

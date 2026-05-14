@@ -1,4 +1,5 @@
 import type { StatsPayload, StatsBucket } from "@/lib/stats";
+import { formatDuration } from "@/lib/stats";
 
 export function StatsDashboard({ data }: { data: StatsPayload }) {
   return (
@@ -11,10 +12,26 @@ export function StatsDashboard({ data }: { data: StatsPayload }) {
       </header>
 
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Card label="Total" value={data.total} sub={`${data.totalUnique} únicos`} />
-        <Card label="Últimas 24h" value={data.last24h.visits} sub={`${data.last24h.unique} únicos`} />
-        <Card label="Últimos 7d" value={data.last7d.visits} sub={`${data.last7d.unique} únicos`} />
-        <Card label="Últimos 30d" value={data.last30d.visits} sub={`${data.last30d.unique} únicos`} />
+        <Card
+          label="Total"
+          value={data.total}
+          sub={`${data.totalUnique} únicos · ${formatDuration(data.avgDurationMs)} médio`}
+        />
+        <Card
+          label="Últimas 24h"
+          value={data.last24h.visits}
+          sub={`${data.last24h.unique} únicos · ${formatDuration(data.last24h.avgDurationMs)}`}
+        />
+        <Card
+          label="Últimos 7d"
+          value={data.last7d.visits}
+          sub={`${data.last7d.unique} únicos · ${formatDuration(data.last7d.avgDurationMs)}`}
+        />
+        <Card
+          label="Últimos 30d"
+          value={data.last30d.visits}
+          sub={`${data.last30d.unique} únicos · ${formatDuration(data.last30d.avgDurationMs)}`}
+        />
       </section>
 
       <section className="rounded border border-accent/10 bg-black/20 p-5">
@@ -25,8 +42,20 @@ export function StatsDashboard({ data }: { data: StatsPayload }) {
       </section>
 
       <section className="grid gap-6 md:grid-cols-2">
-        <TopList title="Páginas mais acessadas" items={data.topPaths.map((p) => ({ label: p.path, value: p.visits }))} empty="Sem dados ainda" />
-        <TopList title="Países" items={data.topCountries.map((c) => ({ label: c.country, value: c.visits }))} empty="Sem dados de localização" />
+        <TopList
+          title="Páginas mais acessadas"
+          items={data.topPaths.map((p) => ({
+            label: p.path,
+            value: p.visits,
+            hint: formatDuration(p.avgDurationMs),
+          }))}
+          empty="Sem dados ainda"
+        />
+        <TopList
+          title="Países"
+          items={data.topCountries.map((c) => ({ label: c.country, value: c.visits }))}
+          empty="Sem dados de localização"
+        />
       </section>
     </div>
   );
@@ -98,7 +127,7 @@ function TopList({
   empty,
 }: {
   title: string;
-  items: { label: string; value: number }[];
+  items: { label: string; value: number; hint?: string }[];
   empty: string;
 }) {
   const max = Math.max(1, ...items.map((i) => i.value));
@@ -113,7 +142,14 @@ function TopList({
             <li key={i.label}>
               <div className="flex justify-between text-sm">
                 <span className="truncate text-cream">{i.label}</span>
-                <span className="text-accent">{i.value.toLocaleString("pt-BR")}</span>
+                <span className="flex items-center gap-2 text-accent">
+                  {i.hint && (
+                    <span className="text-[10px] uppercase tracking-[1px] text-dim">
+                      {i.hint}
+                    </span>
+                  )}
+                  {i.value.toLocaleString("pt-BR")}
+                </span>
               </div>
               <div className="mt-1 h-1 overflow-hidden rounded bg-accent/10">
                 <div

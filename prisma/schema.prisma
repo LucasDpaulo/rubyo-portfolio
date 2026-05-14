@@ -47,6 +47,7 @@ model Visit {
   path        String
   fingerprint String
   country     String?
+  durationMs  Int?
   createdAt   DateTime @default(now())
 
   @@index([createdAt])

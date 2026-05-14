@@ -4,58 +4,83 @@ const DAY = 24 * 60 * 60 * 1000;
 
 export type StatsBucket = { date: string; visits: number; unique: number };
 
+export type PeriodStats = { visits: number; unique: number; avgDurationMs: number };
+
 export type StatsPayload = {
   total: number;
   totalUnique: number;
-  last24h: { visits: number; unique: number };
-  last7d: { visits: number; unique: number };
-  last30d: { visits: number; unique: number };
-  topPaths: { path: string; visits: number }[];
+  avgDurationMs: number;
+  last24h: PeriodStats;
+  last7d: PeriodStats;
+  last30d: PeriodStats;
+  topPaths: { path: string; visits: number; avgDurationMs: number }[];
   topCountries: { country: string; visits: number }[];
   daily: StatsBucket[];
 };
 
-async function bucketCounts(sinceMs: number) {
+async function bucketStats(sinceMs: number): Promise<PeriodStats> {
   const since = new Date(Date.now() - sinceMs);
-  const [visits, uniqueRows] = await Promise.all([
+  const [visits, uniqueRows, durAgg] = await Promise.all([
     prisma.visit.count({ where: { createdAt: { gte: since } } }),
     prisma.visit.findMany({
       where: { createdAt: { gte: since } },
       distinct: ["fingerprint"],
       select: { fingerprint: true },
     }),
+    prisma.visit.aggregate({
+      where: { createdAt: { gte: since }, durationMs: { not: null } },
+      _avg: { durationMs: true },
+    }),
   ]);
-  return { visits, unique: uniqueRows.length };
+  return {
+    visits,
+    unique: uniqueRows.length,
+    avgDurationMs: Math.round(durAgg._avg.durationMs ?? 0),
+  };
 }
 
 export async function getStats(): Promise<StatsPayload> {
   const since30 = new Date(Date.now() - 30 * DAY);
 
-  const [total, totalUniqueRows, last24h, last7d, last30d, topPathsRaw, topCountriesRaw, last30dRows] =
-    await Promise.all([
-      prisma.visit.count(),
-      prisma.visit.findMany({ distinct: ["fingerprint"], select: { fingerprint: true } }),
-      bucketCounts(DAY),
-      bucketCounts(7 * DAY),
-      bucketCounts(30 * DAY),
-      prisma.visit.groupBy({
-        by: ["path"],
-        _count: { path: true },
-        orderBy: { _count: { path: "desc" } },
-        take: 10,
-      }),
-      prisma.visit.groupBy({
-        by: ["country"],
-        _count: { country: true },
-        where: { country: { not: null } },
-        orderBy: { _count: { country: "desc" } },
-        take: 5,
-      }),
-      prisma.visit.findMany({
-        where: { createdAt: { gte: since30 } },
-        select: { createdAt: true, fingerprint: true },
-      }),
-    ]);
+  const [
+    total,
+    totalUniqueRows,
+    durAvgAll,
+    last24h,
+    last7d,
+    last30d,
+    topPathsRaw,
+    topCountriesRaw,
+    last30dRows,
+  ] = await Promise.all([
+    prisma.visit.count(),
+    prisma.visit.findMany({ distinct: ["fingerprint"], select: { fingerprint: true } }),
+    prisma.visit.aggregate({
+      where: { durationMs: { not: null } },
+      _avg: { durationMs: true },
+    }),
+    bucketStats(DAY),
+    bucketStats(7 * DAY),
+    bucketStats(30 * DAY),
+    prisma.visit.groupBy({
+      by: ["path"],
+      _count: { path: true },
+      _avg: { durationMs: true },
+      orderBy: { _count: { path: "desc" } },
+      take: 10,
+    }),
+    prisma.visit.groupBy({
+      by: ["country"],
+      _count: { country: true },
+      where: { country: { not: null } },
+      orderBy: { _count: { country: "desc" } },
+      take: 5,
+    }),
+    prisma.visit.findMany({
+      where: { createdAt: { gte: since30 } },
+      select: { createdAt: true, fingerprint: true },
+    }),
+  ]);
 
   const byDay = new Map<string, { visits: number; fps: Set<string> }>();
   for (let i = 0; i < 30; i++) {
@@ -80,13 +105,29 @@ export async function getStats(): Promise<StatsPayload> {
   return {
     total,
     totalUnique: totalUniqueRows.length,
+    avgDurationMs: Math.round(durAvgAll._avg.durationMs ?? 0),
     last24h,
     last7d,
     last30d,
-    topPaths: topPathsRaw.map((r) => ({ path: r.path, visits: r._count.path })),
+    topPaths: topPathsRaw.map((r) => ({
+      path: r.path,
+      visits: r._count.path,
+      avgDurationMs: Math.round(r._avg.durationMs ?? 0),
+    })),
     topCountries: topCountriesRaw
       .filter((r) => r.country)
       .map((r) => ({ country: r.country as string, visits: r._count.country })),
     daily,
   };
+}
+
+export function formatDuration(ms: number): string {
+  if (!ms || ms < 1000) return "0s";
+  const total = Math.round(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
 }
