@@ -101,6 +101,7 @@ export function VideoCard({
           videoId={video.videoId}
           title={video.title}
           aspectRatio={video.aspectRatio}
+          tag={video.tag}
           onClose={() => setPlaying(false)}
         />
       )}
