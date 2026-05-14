@@ -836,6 +836,37 @@ body.admin-mode .reorder-arrows {
   cursor: not-allowed;
 }
 
+.video-modal-close {
+  position: absolute;
+  top: -52px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(13, 10, 8, 0.55);
+  color: var(--color-cream);
+  border: 1px solid rgba(220, 208, 198, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.video-modal-close:hover {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  transform: scale(1.06);
+}
+@media (max-width: 640px) {
+  .video-modal-close {
+    top: -48px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
 .admin-input {
   width: 100%;
   padding: 10px;

@@ -35,25 +35,33 @@ export function VideoModal({ provider, videoId, title, aspectRatio, onClose }: P
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-6 backdrop-blur-md"
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-6"
+        style={{
+          background: "rgba(13, 10, 8, 0.18)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+        }}
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.96, opacity: 0 }}
+          initial={{ scale: 0.97, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.96, opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className={`relative w-full ${isShort ? "max-w-[360px]" : "max-w-[1100px]"}`}
+          exit={{ scale: 0.97, opacity: 0 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className={`relative w-full ${isShort ? "max-w-[400px]" : "max-w-[1100px]"}`}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fechar"
-            className="absolute -top-12 right-0 inline-flex h-10 items-center gap-2 rounded-full bg-bg/10 px-4 text-xs uppercase tracking-[2px] text-bg backdrop-blur transition-colors hover:bg-bg hover:text-ink"
+            aria-label="Fechar (Esc)"
+            title="Fechar (Esc)"
+            className="video-modal-close"
           >
-            Fechar ✕
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
           </button>
           <div
             className={`overflow-hidden rounded-2xl bg-black shadow-2xl ${
