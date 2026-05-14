@@ -49,23 +49,18 @@ export function AvatarEditor({
       setError(null);
       setUploading(true);
       try {
-        const presign = await fetch("/api/admin/upload", {
+        const { base64, mimeType } = await resizeToBase64(file, 512);
+        const res = await fetch("/api/admin/upload", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ filename: file.name, contentType: file.type }),
+          body: JSON.stringify({ contentType: mimeType, base64 }),
         });
-        if (!presign.ok) {
-          const j = await presign.json().catch(() => ({}));
-          throw new Error(j.message || `Upload falhou (${presign.status})`);
+        if (!res.ok) {
+          const j = await res.json().catch(() => ({}));
+          throw new Error(j.message || j.error || `Upload falhou (${res.status})`);
         }
-        const { uploadUrl, publicUrl } = await presign.json();
-        const put = await fetch(uploadUrl, {
-          method: "PUT",
-          headers: { "content-type": file.type },
-          body: file,
-        });
-        if (!put.ok) throw new Error(`PUT S3 falhou (${put.status})`);
-        setUrl(publicUrl);
+        const { url: assetUrl } = await res.json();
+        setUrl(assetUrl);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro no upload");
       } finally {
@@ -197,6 +192,37 @@ export function AvatarEditor({
       </div>
     </div>
   );
+}
+
+async function resizeToBase64(
+  file: File,
+  maxSize: number,
+): Promise<{ base64: string; mimeType: string }> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error || new Error("read"));
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error("decode"));
+    i.src = dataUrl;
+  });
+  const ratio = Math.min(1, maxSize / Math.max(img.width, img.height));
+  const w = Math.round(img.width * ratio);
+  const h = Math.round(img.height * ratio);
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas-context");
+  ctx.drawImage(img, 0, 0, w, h);
+  const mimeType = "image/webp";
+  const out = canvas.toDataURL(mimeType, 0.88);
+  const base64 = out.split(",")[1] ?? "";
+  return { base64, mimeType };
 }
 
 function Slider({

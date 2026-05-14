@@ -45,13 +45,13 @@ export const profileSchema = z.object({
   role: z.string().max(60),
   socials: z.array(socialSchema).max(8),
   email: z.string().email(),
-  avatarUrl: z.string().url().or(z.literal("")).optional().default(""),
+  avatarUrl: z.string().max(500).optional().default(""),
   avatarAdjustments: avatarAdjustmentsSchema.optional(),
 });
 
 export const uploadRequestSchema = z.object({
-  filename: z.string().min(1).max(200),
   contentType: z.string().regex(/^image\/(png|jpe?g|webp|gif)$/),
+  base64: z.string().min(8).max(4_000_000),
 });
 
 export const loginSchema = z.object({

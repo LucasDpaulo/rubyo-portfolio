@@ -34,3 +34,10 @@ model SiteContent {
   value     Json
   updatedAt DateTime @updatedAt
 }
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+}

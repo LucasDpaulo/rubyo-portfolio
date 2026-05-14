@@ -94,7 +94,6 @@ DATABASE_URL="$(neon connection-string --project-id shy-cell-56903702 --org-id o
 ## Variáveis de ambiente
 
 - Em **prod (Vercel)** já setadas: `DATABASE_URL`, `NEXTAUTH_SECRET`, `AUTH_SECRET`, `NEXTAUTH_URL=https://rubyo.vercel.app`, `ADMIN_EMAIL`, `ADMIN_INITIAL_PASSWORD`
-- **S3 (opcional, pra upload de avatar)**: `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`. Pra serviços não-AWS (R2/MinIO/B2): também `S3_ENDPOINT` e geralmente `S3_PUBLIC_URL`. Sem isso, o upload retorna 503 mas o site segue rodando (fallback = inicial)
 - Em **local**: ver `.env.example`. Pra testar com dados reais, apontar `DATABASE_URL` no `.env.local` pro Neon de prod (não precisa subir docker).
 
 ## Admin
@@ -103,7 +102,7 @@ Login: `roberto@gmail.com` / senha `editor` (trocar pelo painel `/admin/conta`).
 
 **Dois fluxos pra editar conteúdo:**
 
-1. **Inline na home** (preferido) — depois de logar, clicar no logo "ROBERTO" do nav abre o modal de login. Logado, aparecem botões ✏️ em cada elemento editável (avatar/foto, nome, título, descrição, vídeo de fundo, social links, cards de vídeo). O botão ✏️ no avatar abre o editor com upload pro S3, ajuste de zoom/posição, presets de color grade e sliders (brilho/contraste/saturação/matiz/sépia/P&B/desfoque). Cards de vídeo também ganham um botão "+" no header de cada seção (Shorts / Long Form) pra adicionar novos vídeos inline. Long Form tem ainda um toggle grid↔lista pra alternar visual.
+1. **Inline na home** (preferido) — depois de logar, clicar no logo "ROBERTO" do nav abre o modal de login. Logado, aparecem botões ✏️ em cada elemento editável (avatar/foto, nome, título, descrição, vídeo de fundo, social links, cards de vídeo). O botão ✏️ no avatar abre o editor: upload é redimensionado client-side pra 512px webp e gravado direto no Postgres (modelo `MediaAsset`, bytea), servido por `/api/assets/[id]` com cache imutável. Ajuste de zoom/posição, presets de color grade e sliders (brilho/contraste/saturação/matiz/sépia/P&B/desfoque). Cards de vídeo também ganham um botão "+" no header de cada seção (Shorts / Long Form) pra adicionar novos vídeos inline. Long Form tem ainda um toggle grid↔lista pra alternar visual.
 2. **Painel `/admin`** — abas: Vídeos (CRUD + drag-reorder), Hero, Perfil, Conta (trocar senha).
 
 Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer query.
