@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, DM_Sans, Archivo_Black } from "next/font/google";
+import { Bebas_Neue, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { VisitBeacon } from "@/components/public/VisitBeacon";
 
 const bebas = Bebas_Neue({
   variable: "--font-bebas",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  adjustFontFallback: false,
-});
-
-const heroDisplay = Archivo_Black({
-  variable: "--font-anton",
   subsets: ["latin"],
   weight: "400",
   display: "swap",
@@ -39,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${bebas.variable} ${dm.variable} ${heroDisplay.variable}`}>
+    <html lang="pt-BR" className={`${bebas.variable} ${dm.variable}`}>
       <body>
         {children}
         <VisitBeacon />
