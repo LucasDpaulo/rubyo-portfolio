@@ -788,6 +788,33 @@ body.admin-mode .edit-btn {
   top: 10px;
   right: 10px;
   z-index: 3;
+  display: flex;
+  gap: 6px;
+}
+.card-delete-btn {
+  display: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(13, 10, 8, 0.8);
+  border: 1px solid rgba(255, 122, 122, 0.5);
+  color: #ff7a7a;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+body.admin-mode .card-delete-btn {
+  display: inline-flex;
+}
+.card-delete-btn:hover {
+  background: #ff7a7a;
+  color: #fff;
+  transform: scale(1.08);
+}
+.card-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .reorder-arrows {

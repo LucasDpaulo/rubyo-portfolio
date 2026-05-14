@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Video } from "@prisma/client";
 import { EditButton } from "@/components/public/EditButton";
 import { ReorderArrows } from "@/components/public/ReorderArrows";
@@ -22,6 +23,25 @@ export function VideoCard({
   nextId?: string | null;
 }) {
   const [playing, setPlaying] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const router = useRouter();
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (deleting) return;
+    const ok = window.confirm(`Excluir "${video.title}"? Essa ação não pode ser desfeita.`);
+    if (!ok) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/videos/${video.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(await res.text());
+      router.refresh();
+    } catch (err) {
+      setDeleting(false);
+      alert(err instanceof Error ? err.message : "Erro ao excluir");
+    }
+  }
 
   const orient = variant === "short" ? "vertical" : "horizontal";
   const tag = variant === "short" ? "Vertical" : "Horizontal";
@@ -83,6 +103,19 @@ export function VideoCard({
         {isAdmin && (
           <div className="card-edit">
             <EditButton payload={{ type: "project", video }} label="Editar vídeo" />
+            <button
+              type="button"
+              className="card-delete-btn"
+              onClick={handleDelete}
+              disabled={deleting}
+              aria-label="Excluir vídeo"
+              title="Excluir vídeo"
+            >
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
+                <path d="M10 11v6M14 11v6" />
+              </svg>
+            </button>
           </div>
         )}
         {isAdmin && (
