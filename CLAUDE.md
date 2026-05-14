@@ -166,12 +166,34 @@ Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer qu
 - Só `.hero-content h1` usa Archivo Black, resto continua Bebas
 - Lição: quando o usuário cola um snippet CSS, ele pode estar mostrando o que JÁ tem (cole o "antes"), não o que QUER. Confirmar o intent antes de aplicar
 
-**Estado atual:**
+**Estado (após parte 1):**
 - Último commit: `6a8cfb1` (botão excluir vídeo)
-- Alias `rubyo.vercel.app` aponta pro deploy mais recente (forçado manual no fim)
 - Stack: deps `@aws-sdk/*` e `react-image-crop` removidas; `lib/s3.ts` deletado
 
 **Fios soltos:**
 - Background tasks de alias Vercel travam silenciosamente às vezes — depois de cada deploy, conferir com `vercel inspect rubyo.vercel.app` se aponta pro hash novo. Se não, forçar com `vercel alias set <hash>-lucashs-projects.vercel.app rubyo.vercel.app`
 - Stats começa zerado, popula com visitas novas (visitas antigas não retroagem)
 - Roberto continua podendo editar conteúdo pelo painel — features novas: trocar foto inline (✏️ no avatar), excluir vídeos, reordenar com setinhas, ver tráfego em `/admin/stats`
+
+## Sessão 2026-05-14 (parte 2)
+
+**Ajustes finos:**
+- **Carrossel do avatar** — seta foi pra fora da foto (`right: -42px`), auto-rotate **5s → 30s**, fade **0.6s → 2s** (Avatar.tsx + globals.css). Label do editor atualizado pra "30s"
+- **Modal de vídeo centralizado na viewport** — `VideoModal` agora usa `createPortal(..., document.body)`. Sem isso o `transform` do `FadeIn` (Framer Motion) criava containing block e o `position: fixed` se ancorava ao card em vez da tela
+- **Botão de lixeira inline em cada card de vídeo** — ícone vermelho ao lado da ✏️, só em `body.admin-mode`, `window.confirm` antes do DELETE. Antes a única opção era abrir o modal de edição
+- **Fix: avatar voltou a ser circular** — `.avatar-container` precisava de `position: relative` pra ancorar os `.avatar-photo` absolutos. Sem isso eles ficavam relativos ao `.avatar-stage` e a foto vazava do círculo (parecia quadrada)
+- **Hero h1 mais pesado** — `line-height 0.85 → 0.78`, `letter-spacing 1px → -0.05em`, `font-size max 6.5rem → 7.5rem`. Visual "cinematográfico bloco pesado"
+
+**Dev local:**
+- `.env` tinha `DATABASE_URL` apontando pra `localhost` (user `roberto`, Docker que não existe). Adicionado `DATABASE_URL` em **`.env.local`** apontando pro Neon prod via `neonctl`
+- `.env.local` agora também tem `NEXTAUTH_SECRET`, `AUTH_SECRET`, `NEXTAUTH_URL=http://localhost:3001`
+- ⚠️ **Atenção**: dev local agora escreve direto no DB de prod. Cuidado ao editar via `/admin` em localhost
+
+**Estado atual:**
+- Último commit: `8850b27` (hero h1 pesado)
+- Deploys + alias forçados manualmente após cada push (auto-alias da Vercel segue quebrado)
+- Site público no ar em https://rubyo.vercel.app
+
+**Fios soltos (parte 2):**
+- Se o user quiser tirar a feature "dev local pisa no DB de prod", a saída limpa é: trocar `.env.local` por um branch do Neon (`neonctl branches create`) e apontar o `DATABASE_URL` local pra ele
+- `.env` ainda tem URL inválida apontando pra `localhost` com user `roberto` — `.env.local` sobrescreve, mas vale limpar quando der
