@@ -15,6 +15,7 @@ export const DEFAULT_PROFILE: ProfileContent = {
   role: "Editor · 1 ano",
   email: "roberto@gmail.com",
   avatarUrl: "",
+  avatarUrl2: "",
   socials: [
     { label: "@rubyoroberto", url: "https://x.com/rubyoroberto", icon: "x" },
     { label: "Discord", url: "#", icon: "discord" },

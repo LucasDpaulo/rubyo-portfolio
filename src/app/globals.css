@@ -1051,6 +1051,62 @@ body.admin-mode .reorder-arrows {
   margin: 0;
 }
 
+.avatar-stage {
+  position: relative;
+  width: fit-content;
+}
+.avatar-photo {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.avatar-photo.is-active {
+  opacity: 1;
+}
+.avatar-next-btn {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  z-index: 3;
+}
+.avatar-next-btn:hover {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.avatar-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(196, 149, 106, 0.25);
+  border-radius: 8px;
+  min-width: 150px;
+}
+.avatar-slot-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-dim);
+  text-align: center;
+}
+
 .avatar-modal-content {
   max-width: 720px;
   width: 92vw;

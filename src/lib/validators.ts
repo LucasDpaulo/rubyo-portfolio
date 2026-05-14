@@ -46,6 +46,7 @@ export const profileSchema = z.object({
   socials: z.array(socialSchema).max(8),
   email: z.string().email(),
   avatarUrl: z.string().max(500).optional().default(""),
+  avatarUrl2: z.string().max(500).optional().default(""),
   avatarAdjustments: avatarAdjustmentsSchema.optional(),
 });
 

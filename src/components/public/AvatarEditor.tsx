@@ -31,23 +31,27 @@ export function AvatarEditor({
 }) {
   const router = useRouter();
   const [url, setUrl] = useState<string>(profile.avatarUrl || "");
+  const [url2, setUrl2] = useState<string>(profile.avatarUrl2 || "");
   const [adj, setAdj] = useState<AvatarAdjustments>(
     profile.avatarAdjustments ?? DEFAULT_AVATAR_ADJUSTMENTS,
   );
-  const [uploading, setUploading] = useState(false);
+  const [uploadingSlot, setUploadingSlot] = useState<1 | 2 | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const fileRef2 = useRef<HTMLInputElement>(null);
+
+  const uploading = uploadingSlot !== null;
 
   const setNum = (k: keyof AvatarAdjustments) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setAdj((p) => ({ ...p, [k]: parseFloat(e.target.value) }));
 
-  const onFile = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadFor = useCallback(
+    (slot: 1 | 2) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
       setError(null);
-      setUploading(true);
+      setUploadingSlot(slot);
       try {
         const { base64, mimeType } = await resizeToBase64(file, 512);
         const res = await fetch("/api/admin/upload", {
@@ -60,15 +64,19 @@ export function AvatarEditor({
           throw new Error(j.message || j.error || `Upload falhou (${res.status})`);
         }
         const { url: assetUrl } = await res.json();
-        setUrl(assetUrl);
+        if (slot === 1) setUrl(assetUrl);
+        else setUrl2(assetUrl);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro no upload");
       } finally {
-        setUploading(false);
+        setUploadingSlot(null);
       }
     },
     [],
   );
+
+  const onFile = uploadFor(1);
+  const onFile2 = uploadFor(2);
 
   const onSave = useCallback(async () => {
     setSaving(true);
@@ -77,6 +85,7 @@ export function AvatarEditor({
       const next: ProfileContent = {
         ...profile,
         avatarUrl: url,
+        avatarUrl2: url2,
         avatarAdjustments: adj,
       };
       const res = await fetch("/api/admin/profile", {
@@ -92,11 +101,15 @@ export function AvatarEditor({
     } finally {
       setSaving(false);
     }
-  }, [profile, url, adj, onClose, router]);
+  }, [profile, url, url2, adj, onClose, router]);
 
   const onRemove = useCallback(() => {
     setUrl("");
     setAdj(DEFAULT_AVATAR_ADJUSTMENTS);
+  }, []);
+
+  const onRemove2 = useCallback(() => {
+    setUrl2("");
   }, []);
 
   const previewStyle = useMemo<React.CSSProperties>(
@@ -124,26 +137,53 @@ export function AvatarEditor({
           )}
         </div>
         <div className="avatar-editor-actions">
-          <button
-            type="button"
-            className="contact-btn"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-          >
-            {uploading ? "ENVIANDO…" : url ? "TROCAR FOTO" : "ENVIAR FOTO"}
-          </button>
-          {url && (
-            <button type="button" className="ghost-btn" onClick={onRemove}>
-              REMOVER
+          <div className="avatar-slot">
+            <span className="avatar-slot-label">Foto 1</span>
+            <button
+              type="button"
+              className="contact-btn"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+            >
+              {uploadingSlot === 1 ? "ENVIANDO…" : url ? "TROCAR" : "ENVIAR"}
             </button>
-          )}
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/png,image/jpeg,image/webp,image/gif"
-            style={{ display: "none" }}
-            onChange={onFile}
-          />
+            {url && (
+              <button type="button" className="ghost-btn" onClick={onRemove}>
+                REMOVER
+              </button>
+            )}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              style={{ display: "none" }}
+              onChange={onFile}
+            />
+          </div>
+
+          <div className="avatar-slot">
+            <span className="avatar-slot-label">Foto 2 (opcional — alterna a cada 5s)</span>
+            <button
+              type="button"
+              className="contact-btn"
+              onClick={() => fileRef2.current?.click()}
+              disabled={uploading}
+            >
+              {uploadingSlot === 2 ? "ENVIANDO…" : url2 ? "TROCAR" : "ENVIAR"}
+            </button>
+            {url2 && (
+              <button type="button" className="ghost-btn" onClick={onRemove2}>
+                REMOVER
+              </button>
+            )}
+            <input
+              ref={fileRef2}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              style={{ display: "none" }}
+              onChange={onFile2}
+            />
+          </div>
         </div>
       </div>
 

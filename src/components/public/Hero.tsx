@@ -45,6 +45,7 @@ export function Hero({
             <Avatar
               name={profile.name}
               imageUrl={profile.avatarUrl || undefined}
+              imageUrl2={profile.avatarUrl2 || undefined}
               adjustments={profile.avatarAdjustments}
             />
             {isAdmin && (
