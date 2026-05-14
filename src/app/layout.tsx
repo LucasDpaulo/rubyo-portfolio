@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, DM_Sans, Anton } from "next/font/google";
 import "./globals.css";
+import { VisitBeacon } from "@/components/public/VisitBeacon";
 
 const bebas = Bebas_Neue({
   variable: "--font-bebas",
@@ -39,7 +40,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${bebas.variable} ${dm.variable} ${anton.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <VisitBeacon />
+      </body>
     </html>
   );
 }

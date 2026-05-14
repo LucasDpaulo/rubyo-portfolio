@@ -41,3 +41,15 @@ model MediaAsset {
   data      Bytes
   createdAt DateTime @default(now())
 }
+
+model Visit {
+  id          String   @id @default(cuid())
+  path        String
+  fingerprint String
+  country     String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+  @@index([fingerprint])
+}

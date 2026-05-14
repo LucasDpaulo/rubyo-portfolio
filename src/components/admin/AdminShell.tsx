@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
 
 const TABS = [
+  { href: "/admin/stats", label: "Stats" },
   { href: "/admin/videos", label: "Vídeos" },
   { href: "/admin/hero", label: "Hero" },
   { href: "/admin/profile", label: "Perfil" },
