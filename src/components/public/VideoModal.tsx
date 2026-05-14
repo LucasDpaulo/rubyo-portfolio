@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   provider: string;
@@ -13,7 +14,10 @@ type Props = {
 };
 
 export function VideoModal({ provider, videoId, title, aspectRatio, tag, onClose }: Props) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -36,7 +40,9 @@ export function VideoModal({ provider, videoId, title, aspectRatio, tag, onClose
     setTimeout(() => window.dispatchEvent(new Event("open-contact")), 300);
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
@@ -86,6 +92,7 @@ export function VideoModal({ provider, videoId, title, aspectRatio, tag, onClose
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

@@ -162,7 +162,7 @@ export function AvatarEditor({
           </div>
 
           <div className="avatar-slot">
-            <span className="avatar-slot-label">Foto 2 (opcional — alterna a cada 5s)</span>
+            <span className="avatar-slot-label">Foto 2 (opcional — alterna a cada 30s)</span>
             <button
               type="button"
               className="contact-btn"

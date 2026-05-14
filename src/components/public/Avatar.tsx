@@ -26,7 +26,7 @@ export function avatarImgStyle(adj: AvatarAdjustments): React.CSSProperties {
   };
 }
 
-const AUTOPLAY_MS = 5000;
+const AUTOPLAY_MS = 30000;
 
 export function Avatar({
   name,

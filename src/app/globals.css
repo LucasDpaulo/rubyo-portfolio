@@ -1059,7 +1059,7 @@ body.admin-mode .reorder-arrows {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity 2s ease;
 }
 .avatar-photo.is-active {
   opacity: 1;
@@ -1067,7 +1067,7 @@ body.admin-mode .reorder-arrows {
 .avatar-next-btn {
   position: absolute;
   top: 50%;
-  right: -14px;
+  right: -42px;
   transform: translateY(-50%);
   width: 30px;
   height: 30px;
