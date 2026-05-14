@@ -10,6 +10,7 @@ export type EditPayload =
   | { type: "name"; profile: ProfileContent }
   | { type: "role"; profile: ProfileContent }
   | { type: "socials"; profile: ProfileContent }
+  | { type: "avatar"; profile: ProfileContent }
   | { type: "project"; video: Video }
   | { type: "new-video"; aspectRatio: "16:9" | "9:16" };
 

@@ -27,11 +27,31 @@ export const socialSchema = z.object({
   icon: z.enum(["x", "discord", "email", "instagram", "youtube", "tiktok"]),
 });
 
+export const avatarAdjustmentsSchema = z.object({
+  brightness: z.number().min(0).max(2).default(1),
+  contrast: z.number().min(0).max(2).default(1),
+  saturation: z.number().min(0).max(2).default(1),
+  hue: z.number().min(-180).max(180).default(0),
+  sepia: z.number().min(0).max(1).default(0),
+  grayscale: z.number().min(0).max(1).default(0),
+  blur: z.number().min(0).max(20).default(0),
+  zoom: z.number().min(1).max(4).default(1),
+  offsetX: z.number().min(-100).max(100).default(0),
+  offsetY: z.number().min(-100).max(100).default(0),
+});
+
 export const profileSchema = z.object({
   name: z.string().min(1).max(60),
   role: z.string().max(60),
   socials: z.array(socialSchema).max(8),
   email: z.string().email(),
+  avatarUrl: z.string().url().or(z.literal("")).optional().default(""),
+  avatarAdjustments: avatarAdjustmentsSchema.optional(),
+});
+
+export const uploadRequestSchema = z.object({
+  filename: z.string().min(1).max(200),
+  contentType: z.string().regex(/^image\/(png|jpe?g|webp|gif)$/),
 });
 
 export const loginSchema = z.object({
@@ -47,3 +67,17 @@ export const changePasswordSchema = z.object({
 export type HeroContent = z.infer<typeof heroSchema>;
 export type ProfileContent = z.infer<typeof profileSchema>;
 export type SocialLink = z.infer<typeof socialSchema>;
+export type AvatarAdjustments = z.infer<typeof avatarAdjustmentsSchema>;
+
+export const DEFAULT_AVATAR_ADJUSTMENTS: AvatarAdjustments = {
+  brightness: 1,
+  contrast: 1,
+  saturation: 1,
+  hue: 0,
+  sepia: 0,
+  grayscale: 0,
+  blur: 0,
+  zoom: 1,
+  offsetX: 0,
+  offsetY: 0,
+};

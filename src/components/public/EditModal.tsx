@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { EditPayload } from "@/components/public/EditButton";
 import type { HeroContent, ProfileContent } from "@/lib/validators";
 import type { Video } from "@prisma/client";
+import { AvatarEditor } from "@/components/public/AvatarEditor";
 
 type Fields = Record<string, string>;
 
@@ -26,6 +27,8 @@ function titleFor(p: EditPayload): string {
       return `EDITAR VÍDEO: ${p.video.title.toUpperCase()}`;
     case "new-video":
       return p.aspectRatio === "9:16" ? "NOVO SHORT" : "NOVO LONG FORM";
+    case "avatar":
+      return "EDITAR FOTO";
   }
 }
 
@@ -62,6 +65,8 @@ function initialFields(p: EditPayload): Fields {
       };
     case "new-video":
       return { title: "", url: "", tag: "" };
+    case "avatar":
+      return {};
   }
 }
 
@@ -306,29 +311,39 @@ export function EditModal() {
         if (e.target === e.currentTarget) close();
       }}
     >
-      <div className="modal-content edit-modal-content">
+      <div
+        className={`modal-content edit-modal-content${
+          payload?.type === "avatar" ? " avatar-modal-content" : ""
+        }`}
+      >
         <span className="close-modal" onClick={close} role="button" aria-label="Fechar">
           ×
         </span>
         <h3 className="modal-title edit-modal-title">{payload ? titleFor(payload) : ""}</h3>
 
-        <div className="edit-fields">
-          {payload &&
-            renderInputs(payload, fields, (k, v) =>
-              setFields((prev) => ({ ...prev, [k]: v })),
-            )}
-        </div>
+        {payload?.type === "avatar" ? (
+          <AvatarEditor profile={payload.profile} onClose={close} />
+        ) : (
+          <>
+            <div className="edit-fields">
+              {payload &&
+                renderInputs(payload, fields, (k, v) =>
+                  setFields((prev) => ({ ...prev, [k]: v })),
+                )}
+            </div>
 
-        <button
-          className="contact-btn"
-          onClick={onSave}
-          disabled={saving}
-          style={{ marginTop: 10, cursor: saving ? "wait" : "pointer" }}
-        >
-          {saving ? "SALVANDO…" : "SALVAR ALTERAÇÕES"}
-        </button>
+            <button
+              className="contact-btn"
+              onClick={onSave}
+              disabled={saving}
+              style={{ marginTop: 10, cursor: saving ? "wait" : "pointer" }}
+            >
+              {saving ? "SALVANDO…" : "SALVAR ALTERAÇÕES"}
+            </button>
 
-        {error && <p className="login-error">{error}</p>}
+            {error && <p className="login-error">{error}</p>}
+          </>
+        )}
       </div>
     </div>
   );

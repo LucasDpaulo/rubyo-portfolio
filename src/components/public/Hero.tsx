@@ -41,7 +41,16 @@ export function Hero({
 
       <div className="hero-container">
         <div className="profile-card">
-          <Avatar name={profile.name} />
+          <div className="editable-wrapper avatar-edit-wrapper">
+            <Avatar
+              name={profile.name}
+              imageUrl={profile.avatarUrl || undefined}
+              adjustments={profile.avatarAdjustments}
+            />
+            {isAdmin && (
+              <EditButton payload={{ type: "avatar", profile }} label="Editar foto" />
+            )}
+          </div>
 
           <div className="editable-wrapper">
             <h2 className="p-name">{profile.name}</h2>
