@@ -836,6 +836,29 @@ body.admin-mode .reorder-arrows {
   cursor: not-allowed;
 }
 
+.danger-btn {
+  width: 100%;
+  background: transparent;
+  color: #ff7a7a;
+  border: 1px solid rgba(255, 122, 122, 0.35);
+  padding: 0.7rem 1.2rem;
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  letter-spacing: 0.15em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.danger-btn:hover:not(:disabled) {
+  background: rgba(255, 122, 122, 0.12);
+  color: #ff9090;
+  border-color: rgba(255, 122, 122, 0.7);
+}
+.danger-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .video-modal-close {
   position: absolute;
   top: -52px;

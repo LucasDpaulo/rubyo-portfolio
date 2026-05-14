@@ -262,6 +262,7 @@ export function EditModal() {
   const [payload, setPayload] = useState<EditPayload | null>(null);
   const [fields, setFields] = useState<Fields>({});
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -302,6 +303,28 @@ export function EditModal() {
     }
   }, [payload, fields, close, router]);
 
+  const onDelete = useCallback(async () => {
+    if (!payload || payload.type !== "project") return;
+    const ok = window.confirm(
+      `Excluir "${payload.video.title}"? Essa ação não pode ser desfeita.`,
+    );
+    if (!ok) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/videos/${payload.video.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setDeleting(false);
+      close();
+      router.refresh();
+    } catch (err) {
+      setDeleting(false);
+      setError(err instanceof Error ? err.message : "Erro ao excluir");
+    }
+  }, [payload, close, router]);
+
   const open = payload !== null;
 
   return (
@@ -335,11 +358,23 @@ export function EditModal() {
             <button
               className="contact-btn"
               onClick={onSave}
-              disabled={saving}
+              disabled={saving || deleting}
               style={{ marginTop: 10, cursor: saving ? "wait" : "pointer" }}
             >
               {saving ? "SALVANDO…" : "SALVAR ALTERAÇÕES"}
             </button>
+
+            {payload?.type === "project" && (
+              <button
+                type="button"
+                className="danger-btn"
+                onClick={onDelete}
+                disabled={saving || deleting}
+                style={{ marginTop: 10, cursor: deleting ? "wait" : "pointer" }}
+              >
+                {deleting ? "EXCLUINDO…" : "EXCLUIR VÍDEO"}
+              </button>
+            )}
 
             {error && <p className="login-error">{error}</p>}
           </>
