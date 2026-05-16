@@ -55,9 +55,13 @@ function LayoutToggle({ mode, onToggle }: { mode: LayoutMode; onToggle: () => vo
 export function VideosGrid({
   videos,
   isAdmin = false,
+  xUrl,
+  email,
 }: {
   videos: Video[];
   isAdmin?: boolean;
+  xUrl: string;
+  email: string;
 }) {
   const shorts = videos.filter((v) => v.aspectRatio === "9:16");
   const longs = videos.filter((v) => v.aspectRatio !== "9:16");
@@ -90,6 +94,8 @@ export function VideosGrid({
                 isAdmin={isAdmin}
                 prevId={i > 0 ? shorts[i - 1].id : null}
                 nextId={i < shorts.length - 1 ? shorts[i + 1].id : null}
+                xUrl={xUrl}
+                email={email}
               />
             ))}
           </div>
@@ -119,6 +125,8 @@ export function VideosGrid({
                 isAdmin={isAdmin}
                 prevId={i > 0 ? longs[i - 1].id : null}
                 nextId={i < longs.length - 1 ? longs[i + 1].id : null}
+                xUrl={xUrl}
+                email={email}
               />
             ))}
           </div>

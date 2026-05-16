@@ -15,12 +15,16 @@ export function VideoCard({
   isAdmin = false,
   prevId = null,
   nextId = null,
+  xUrl,
+  email,
 }: {
   video: Video;
   variant: Variant;
   isAdmin?: boolean;
   prevId?: string | null;
   nextId?: string | null;
+  xUrl: string;
+  email: string;
 }) {
   const [playing, setPlaying] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -135,6 +139,8 @@ export function VideoCard({
           title={video.title}
           aspectRatio={video.aspectRatio}
           tag={video.tag}
+          xUrl={xUrl}
+          email={email}
           onClose={() => setPlaying(false)}
         />
       )}

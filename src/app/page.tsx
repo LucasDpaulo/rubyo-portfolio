@@ -20,13 +20,15 @@ export default async function HomePage() {
   ]);
 
   const isAdmin = !!session;
+  const xUrl =
+    profile.socials.find((s) => s.icon === "x")?.url || "https://x.com/rubyoroberto";
 
   return (
     <>
       <AdminModeProvider isAdmin={isAdmin} />
       <Nav logo={profile.name} isAdmin={isAdmin} />
       <Hero hero={hero} profile={profile} isAdmin={isAdmin} />
-      <VideosGrid videos={videos} isAdmin={isAdmin} />
+      <VideosGrid videos={videos} isAdmin={isAdmin} xUrl={xUrl} email={profile.email} />
       <Footer profile={profile} />
       <ContactModal profile={profile} />
       <LoginModal />

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { SocialIcons } from "@/components/public/SocialIcons";
 
 type Props = {
   provider: string;
@@ -10,10 +11,12 @@ type Props = {
   title: string;
   aspectRatio: string;
   tag?: string | null;
+  xUrl: string;
+  email: string;
   onClose: () => void;
 };
 
-export function VideoModal({ provider, videoId, title, aspectRatio, tag, onClose }: Props) {
+export function VideoModal({ provider, videoId, title, aspectRatio, tag, xUrl, email, onClose }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -34,11 +37,6 @@ export function VideoModal({ provider, videoId, title, aspectRatio, tag, onClose
 
   const isShort = aspectRatio === "9:16";
   const formatLabel = tag || (isShort ? "Vertical" : "Horizontal");
-
-  const handleContact = () => {
-    onClose();
-    setTimeout(() => window.dispatchEvent(new Event("open-contact")), 300);
-  };
 
   if (!mounted) return null;
 
@@ -86,9 +84,7 @@ export function VideoModal({ provider, videoId, title, aspectRatio, tag, onClose
               <h3>{title}</h3>
               <p>{formatLabel}</p>
             </div>
-            <button type="button" className="video-modal-cta" onClick={handleContact}>
-              Contato
-            </button>
+            <SocialIcons variant="hero" xUrl={xUrl} email={email} />
           </div>
         </motion.div>
       </motion.div>
