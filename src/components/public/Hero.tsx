@@ -2,6 +2,7 @@ import type { HeroContent, ProfileContent } from "@/lib/validators";
 import { SocialIcons } from "@/components/public/SocialIcons";
 import { Avatar } from "@/components/public/Avatar";
 import { EditButton } from "@/components/public/EditButton";
+import { AnalyticsModal } from "@/components/admin/AnalyticsModal";
 
 export function Hero({
   hero,
@@ -73,6 +74,8 @@ export function Hero({
               <EditButton payload={{ type: "socials", profile }} label="Editar links" />
             )}
           </div>
+
+          {isAdmin && <AnalyticsModal variant="card" />}
         </div>
 
         <div className="hero-content">

@@ -54,3 +54,13 @@ model Visit {
   @@index([path])
   @@index([fingerprint])
 }
+
+model ClickEvent {
+  id        String   @id @default(cuid())
+  kind      String
+  label     String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([kind])
+}

@@ -16,6 +16,8 @@ export type StatsPayload = {
   topPaths: { path: string; visits: number; avgDurationMs: number }[];
   topCountries: { country: string; visits: number }[];
   daily: StatsBucket[];
+  videoClicks: { total: number; top: { label: string; clicks: number }[] };
+  socialClicks: { x: number; discord: number; gmail: number; total: number };
 };
 
 async function bucketStats(sinceMs: number): Promise<PeriodStats> {
@@ -52,6 +54,9 @@ export async function getStats(): Promise<StatsPayload> {
     topPathsRaw,
     topCountriesRaw,
     last30dRows,
+    videoClicksTotal,
+    videoTopRaw,
+    socialGroupRaw,
   ] = await Promise.all([
     prisma.visit.count(),
     prisma.visit.findMany({ distinct: ["fingerprint"], select: { fingerprint: true } }),
@@ -74,13 +79,34 @@ export async function getStats(): Promise<StatsPayload> {
       _count: { country: true },
       where: { country: { not: null } },
       orderBy: { _count: { country: "desc" } },
-      take: 5,
     }),
     prisma.visit.findMany({
       where: { createdAt: { gte: since30 } },
       select: { createdAt: true, fingerprint: true },
     }),
+    prisma.clickEvent.count({ where: { kind: "video" } }),
+    prisma.clickEvent.groupBy({
+      by: ["label"],
+      where: { kind: "video" },
+      _count: { label: true },
+      orderBy: { _count: { label: "desc" } },
+      take: 10,
+    }),
+    prisma.clickEvent.groupBy({
+      by: ["label"],
+      where: { kind: "social" },
+      _count: { label: true },
+    }),
   ]);
+
+  const socialMap = new Map(socialGroupRaw.map((r) => [r.label, r._count.label]));
+  const socialClicks = {
+    x: socialMap.get("x") ?? 0,
+    discord: socialMap.get("discord") ?? 0,
+    gmail: socialMap.get("gmail") ?? 0,
+    total: 0,
+  };
+  socialClicks.total = socialClicks.x + socialClicks.discord + socialClicks.gmail;
 
   const byDay = new Map<string, { visits: number; fps: Set<string> }>();
   for (let i = 0; i < 30; i++) {
@@ -118,16 +144,10 @@ export async function getStats(): Promise<StatsPayload> {
       .filter((r) => r.country)
       .map((r) => ({ country: r.country as string, visits: r._count.country })),
     daily,
+    videoClicks: {
+      total: videoClicksTotal,
+      top: videoTopRaw.map((r) => ({ label: r.label, clicks: r._count.label })),
+    },
+    socialClicks,
   };
-}
-
-export function formatDuration(ms: number): string {
-  if (!ms || ms < 1000) return "0s";
-  const total = Math.round(ms / 1000);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
 }

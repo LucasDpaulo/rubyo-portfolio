@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { ProfileContent } from "@/lib/validators";
+import { trackClick } from "@/lib/track";
 
 const DISCORD_HANDLE = "rubyroberto_editor";
 
@@ -25,6 +26,7 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
 
   const copyDiscord = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    trackClick("social", "discord");
     const temp = document.createElement("input");
     temp.value = DISCORD_HANDLE;
     document.body.appendChild(temp);
@@ -63,7 +65,13 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
           </span>
           <h3 className="modal-title">LET&apos;S TALK</h3>
 
-          <a href={xUrl} target="_blank" rel="noopener noreferrer" className="contact-btn">
+          <a
+            href={xUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-btn"
+            onClick={() => trackClick("social", "x")}
+          >
             <svg viewBox="0 0 24 24">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
             </svg>
@@ -82,6 +90,7 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
             target="_blank"
             rel="noopener noreferrer"
             className="contact-btn"
+            onClick={() => trackClick("social", "gmail")}
           >
             <svg viewBox="0 0 24 24">
               <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />

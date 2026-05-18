@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnalyticsModal } from "@/components/admin/AnalyticsModal";
 
 export default function AdminHome() {
   return (
@@ -6,9 +7,13 @@ export default function AdminHome() {
       <h1 className="mb-2 font-display text-3xl tracking-[2px] text-white">
         BEM-VINDO
       </h1>
-      <p className="mb-8 text-sm text-dim">
+      <p className="mb-6 text-sm text-dim">
         Use as abas acima para editar o conteúdo do site.
       </p>
+
+      <div className="mb-8">
+        <AnalyticsModal />
+      </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Card

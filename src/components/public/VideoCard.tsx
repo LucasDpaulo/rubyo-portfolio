@@ -6,6 +6,7 @@ import type { Video } from "@prisma/client";
 import { EditButton } from "@/components/public/EditButton";
 import { ReorderArrows } from "@/components/public/ReorderArrows";
 import { VideoModal } from "@/components/public/VideoModal";
+import { trackClick } from "@/lib/track";
 
 type Variant = "short" | "long";
 
@@ -47,6 +48,11 @@ export function VideoCard({
     }
   }
 
+  function openVideo() {
+    if (!isAdmin) trackClick("video", video.title);
+    setPlaying(true);
+  }
+
   const orient = variant === "short" ? "vertical" : "horizontal";
   const tag = variant === "short" ? "Vertical" : "Horizontal";
 
@@ -65,11 +71,11 @@ export function VideoCard({
         className={`work-card ${orient}`}
         role="button"
         tabIndex={0}
-        onClick={() => setPlaying(true)}
+        onClick={openVideo}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setPlaying(true);
+            openVideo();
           }
         }}
         aria-label={`Assistir ${video.title}`}
