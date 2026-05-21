@@ -1076,6 +1076,22 @@ body.admin-mode .reorder-arrows {
 
 .edit-modal-content {
   max-width: 400px;
+  max-height: calc(100vh - 30px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.edit-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+.edit-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.edit-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(196, 149, 106, 0.3);
+  border-radius: 3px;
+}
+.edit-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(196, 149, 106, 0.5);
 }
 .edit-modal-title {
   font-size: 1.8rem;

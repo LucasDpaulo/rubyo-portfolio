@@ -3,11 +3,38 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { EditPayload } from "@/components/public/EditButton";
-import type { HeroContent, ProfileContent } from "@/lib/validators";
+import type { HeroContent, ProfileContent, SocialLink } from "@/lib/validators";
 import type { Video } from "@prisma/client";
 import { AvatarEditor } from "@/components/public/AvatarEditor";
 
 type Fields = Record<string, string>;
+
+const SOCIAL_ICONS: SocialLink["icon"][] = [
+  "x",
+  "discord",
+  "email",
+  "instagram",
+  "youtube",
+  "tiktok",
+];
+
+const SOCIAL_PLACEHOLDERS: Record<SocialLink["icon"], string> = {
+  x: "https://x.com/seuusuario",
+  discord: "seuusuario (será copiado ao clicar)",
+  email: "contato@exemplo.com",
+  instagram: "https://instagram.com/seuusuario",
+  youtube: "https://youtube.com/@seuusuario",
+  tiktok: "https://tiktok.com/@seuusuario",
+};
+
+const SOCIAL_LABEL_HINT: Record<SocialLink["icon"], string> = {
+  x: "Twitter / X",
+  discord: "Discord",
+  email: "Email",
+  instagram: "Instagram",
+  youtube: "YouTube",
+  tiktok: "TikTok",
+};
 
 function titleFor(p: EditPayload): string {
   switch (p.type) {
@@ -53,10 +80,8 @@ function initialFields(p: EditPayload): Fields {
       return { name: p.profile.name };
     case "role":
       return { role: p.profile.role };
-    case "socials": {
-      const x = p.profile.socials.find((s) => s.icon === "x")?.url ?? "";
-      return { x, email: p.profile.email };
-    }
+    case "socials":
+      return { email: p.profile.email };
     case "project":
       return {
         title: p.video.title,
@@ -70,7 +95,11 @@ function initialFields(p: EditPayload): Fields {
   }
 }
 
-async function save(p: EditPayload, fields: Fields): Promise<void> {
+async function save(
+  p: EditPayload,
+  fields: Fields,
+  socials: SocialLink[],
+): Promise<void> {
   if (p.type === "titles" || p.type === "desc" || p.type === "bg") {
     const next: HeroContent = {
       ...p.hero,
@@ -95,12 +124,7 @@ async function save(p: EditPayload, fields: Fields): Promise<void> {
       name: p.type === "name" ? fields.name : p.profile.name,
       role: p.type === "role" ? fields.role : p.profile.role,
       email: p.type === "socials" ? fields.email : p.profile.email,
-      socials:
-        p.type === "socials"
-          ? p.profile.socials.map((s) =>
-              s.icon === "x" ? { ...s, url: fields.x } : s,
-            )
-          : p.profile.socials,
+      socials: p.type === "socials" ? socials : p.profile.socials,
     };
     const res = await fetch("/api/admin/profile", {
       method: "PUT",
@@ -143,6 +167,167 @@ async function save(p: EditPayload, fields: Fields): Promise<void> {
     if (!res.ok) throw new Error(await res.text());
     return;
   }
+}
+
+function SocialsEditor({
+  socials,
+  email,
+  setSocials,
+  setEmail,
+}: {
+  socials: SocialLink[];
+  email: string;
+  setSocials: (next: SocialLink[]) => void;
+  setEmail: (v: string) => void;
+}) {
+  function update(i: number, patch: Partial<SocialLink>) {
+    setSocials(socials.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
+  }
+  function remove(i: number) {
+    setSocials(socials.filter((_, idx) => idx !== i));
+  }
+  function move(i: number, dir: -1 | 1) {
+    const j = i + dir;
+    if (j < 0 || j >= socials.length) return;
+    const next = socials.slice();
+    [next[i], next[j]] = [next[j], next[i]];
+    setSocials(next);
+  }
+  function add() {
+    if (socials.length >= 8) return;
+    const used = new Set(socials.map((s) => s.icon));
+    const nextIcon = SOCIAL_ICONS.find((i) => !used.has(i)) ?? "x";
+    setSocials([
+      ...socials,
+      { icon: nextIcon, label: SOCIAL_LABEL_HINT[nextIcon], url: "" },
+    ]);
+  }
+  return (
+    <>
+      <label className="admin-label">Email principal</label>
+      <input
+        className="admin-input"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <p className="admin-hint">Usado no CTA do rodapé. Cada link de contato é editado abaixo.</p>
+
+      <label className="admin-label" style={{ marginTop: 8 }}>
+        Links de contato
+      </label>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {socials.map((s, i) => (
+          <div
+            key={i}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "28px 110px 1fr 32px",
+              gap: 6,
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <button
+                type="button"
+                onClick={() => move(i, -1)}
+                disabled={i === 0}
+                title="Mover pra cima"
+                aria-label="Mover pra cima"
+                style={{
+                  height: 22,
+                  width: 28,
+                  padding: 0,
+                  fontSize: 12,
+                  lineHeight: 1,
+                  background: "transparent",
+                  border: "1px solid rgba(196,149,106,0.2)",
+                  color: "inherit",
+                  cursor: i === 0 ? "not-allowed" : "pointer",
+                  opacity: i === 0 ? 0.35 : 1,
+                  borderRadius: 3,
+                }}
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                onClick={() => move(i, 1)}
+                disabled={i === socials.length - 1}
+                title="Mover pra baixo"
+                aria-label="Mover pra baixo"
+                style={{
+                  height: 22,
+                  width: 28,
+                  padding: 0,
+                  fontSize: 12,
+                  lineHeight: 1,
+                  background: "transparent",
+                  border: "1px solid rgba(196,149,106,0.2)",
+                  color: "inherit",
+                  cursor: i === socials.length - 1 ? "not-allowed" : "pointer",
+                  opacity: i === socials.length - 1 ? 0.35 : 1,
+                  borderRadius: 3,
+                }}
+              >
+                ↓
+              </button>
+            </div>
+            <select
+              className="admin-input"
+              value={s.icon}
+              onChange={(e) => update(i, { icon: e.target.value as SocialLink["icon"] })}
+              style={{ padding: "8px" }}
+            >
+              {SOCIAL_ICONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {SOCIAL_LABEL_HINT[opt]}
+                </option>
+              ))}
+            </select>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <input
+                className="admin-input"
+                placeholder="Rótulo (ex: Discord, @meuuser)"
+                value={s.label}
+                onChange={(e) => update(i, { label: e.target.value })}
+              />
+              <input
+                className="admin-input"
+                placeholder={SOCIAL_PLACEHOLDERS[s.icon as SocialLink["icon"]]}
+                value={s.url}
+                onChange={(e) => update(i, { url: e.target.value })}
+              />
+            </div>
+            <button
+              type="button"
+              className="danger-btn"
+              title="Remover"
+              aria-label="Remover"
+              onClick={() => remove(i)}
+              style={{ width: 32, height: 32, padding: 0, fontSize: 18, lineHeight: 1 }}
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+      {socials.length < 8 && (
+        <button
+          type="button"
+          className="contact-btn"
+          onClick={add}
+          style={{ marginTop: 10, opacity: 0.85 }}
+        >
+          + ADICIONAR CONTATO
+        </button>
+      )}
+      <p className="admin-hint">
+        Discord: deixe sem &quot;http&quot; pra copiar o handle ao clicar. Email: digite só o
+        endereço pra abrir o Gmail. Outros: URL completa.
+      </p>
+    </>
+  );
 }
 
 function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string) => void) {
@@ -212,23 +397,7 @@ function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string
         </>
       );
     case "socials":
-      return (
-        <>
-          <label className="admin-label">Link X (Twitter)</label>
-          <input
-            className="admin-input"
-            value={fields.x}
-            onChange={(e) => set("x", e.target.value)}
-          />
-          <label className="admin-label">Email</label>
-          <input
-            className="admin-input"
-            type="email"
-            value={fields.email}
-            onChange={(e) => set("email", e.target.value)}
-          />
-        </>
-      );
+      return null;
     case "project":
     case "new-video":
       return (
@@ -261,6 +430,7 @@ export function EditModal() {
   const router = useRouter();
   const [payload, setPayload] = useState<EditPayload | null>(null);
   const [fields, setFields] = useState<Fields>({});
+  const [socials, setSocials] = useState<SocialLink[]>([]);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -270,6 +440,11 @@ export function EditModal() {
       const detail = (e as CustomEvent<EditPayload>).detail;
       setPayload(detail);
       setFields(initialFields(detail));
+      if (detail.type === "socials") {
+        setSocials(detail.profile.socials.map((s) => ({ ...s })));
+      } else {
+        setSocials([]);
+      }
       setError(null);
     };
     window.addEventListener("open-edit", onOpen);
@@ -293,7 +468,7 @@ export function EditModal() {
     setSaving(true);
     setError(null);
     try {
-      await save(payload, fields);
+      await save(payload, fields, socials);
       setSaving(false);
       close();
       router.refresh();
@@ -301,7 +476,7 @@ export function EditModal() {
       setSaving(false);
       setError(err instanceof Error ? err.message : "Erro ao salvar");
     }
-  }, [payload, fields, close, router]);
+  }, [payload, fields, socials, close, router]);
 
   const onDelete = useCallback(async () => {
     if (!payload || payload.type !== "project") return;
@@ -349,10 +524,19 @@ export function EditModal() {
         ) : (
           <>
             <div className="edit-fields">
-              {payload &&
+              {payload?.type === "socials" ? (
+                <SocialsEditor
+                  socials={socials}
+                  email={fields.email ?? ""}
+                  setSocials={setSocials}
+                  setEmail={(v) => setFields((prev) => ({ ...prev, email: v }))}
+                />
+              ) : (
+                payload &&
                 renderInputs(payload, fields, (k, v) =>
                   setFields((prev) => ({ ...prev, [k]: v })),
-                )}
+                )
+              )}
             </div>
 
             <button

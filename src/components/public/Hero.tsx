@@ -16,8 +16,6 @@ export function Hero({
   const line1 = hero.titleLine1 || profile.name || "ROBERTO";
   const line2 = (hero.titleLine2 || "EDITOR").replace(/\.$/, "");
   const bgId = (hero.bgVideoId ?? "").trim();
-  const xUrl =
-    profile.socials.find((s) => s.icon === "x")?.url || "https://x.com/rubyoroberto";
 
   return (
     <section id="hero" className="hero">
@@ -69,7 +67,7 @@ export function Hero({
           </div>
 
           <div className="editable-wrapper">
-            <SocialIcons xUrl={xUrl} email={profile.email} />
+            <SocialIcons socials={profile.socials} email={profile.email} />
             {isAdmin && (
               <EditButton payload={{ type: "socials", profile }} label="Editar links" />
             )}

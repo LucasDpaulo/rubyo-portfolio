@@ -197,3 +197,39 @@ Rotas API `/api/admin/*` todas validam `auth()` server-side antes de qualquer qu
 **Fios soltos (parte 2):**
 - Se o user quiser tirar a feature "dev local pisa no DB de prod", a saída limpa é: trocar `.env.local` por um branch do Neon (`neonctl branches create`) e apontar o `DATABASE_URL` local pra ele
 - `.env` ainda tem URL inválida apontando pra `localhost` com user `roberto` — `.env.local` sobrescreve, mas vale limpar quando der
+
+## Sessão 2026-05-20
+
+**Contatos editáveis inline (CRUD completo + reordenação):**
+
+Antes: `SocialIcons` (cartão de perfil + footer) e `ContactModal` (popup "LET'S TALK") renderizavam X/Discord/Gmail **hardcoded**. O ✏️ "EDITAR LINKS" só expunha o link do X e o email. Discord handle ficava chumbado no código (`"rubyroberto_editor"`).
+
+Agora:
+- **`SocialIcons` e `ContactModal` são data-driven** — iteram `profile.socials`. Adicionar/remover/reordenar reflete em todos os lugares automaticamente (cartão do hero, footer, video modal aberto, popup contato).
+- **Editor inline "EDITAR LINKS" virou CRUD**: dropdown de ícone (x/discord/email/instagram/youtube/tiktok), label, URL, botão **×** pra remover, **+ ADICIONAR CONTATO** (limite 8 do schema). Email principal continua campo separado no topo.
+- **Reordenação por setas ↑/↓** em cada linha (pontas desabilitam). Mesma ordem aparece nos 3 locais públicos.
+- **Regras de URL por tipo:**
+  - `discord` sem `http://` → copia handle ao clicar + toast
+  - `discord` com `http://` → abre normal
+  - `email` só endereço → abre Gmail compose (`mail.google.com/mail/?view=cm`)
+  - `email` com `http://` ou `mailto:` → usa como tá
+  - resto → abre URL em nova aba
+
+**Cadeia de props refatorada** — `Hero/Footer/VideosGrid/VideoCard/VideoModal/page.tsx` passam `socials: SocialLink[]` em vez do antigo `xUrl: string`.
+
+**Fix de UX:**
+- Modal de edição cortava em telas menores. Adicionado `max-height: calc(100vh - 30px)` + `overflow-y: auto` só em `.edit-modal-content` (com scrollbar marrom 6px). **Não** mexer no `.modal-content` genérico — popup "LET'S TALK" não tem scroll por design (lista curta)
+
+**Arquivos tocados:**
+- `src/components/public/{SocialIcons,ContactModal,EditModal,Hero,Footer,VideoCard,VideoModal,VideosGrid}.tsx`
+- `src/app/page.tsx`
+- `src/app/globals.css` (scroll no edit-modal)
+
+**Estado atual:**
+- Mudanças commitadas em main local, **não pushadas ainda** — user encerrou pra continuar amanhã
+- Build limpo (`npx tsc --noEmit` ok, `next build` ok)
+- Validação local foi feita pelo user; aguardando aprovação pra push + alias Vercel
+
+**Próximos passos / onde paramos:**
+- Amanhã: `git push origin main`, esperar deploy ficar Ready (`vercel ls`), forçar alias com `vercel alias set <hash>-lucashs-projects.vercel.app rubyo.vercel.app`
+- Possível polimento se o user pedir: drag-reorder (em vez de só setas), preview ao vivo do contato dentro do modal de edição

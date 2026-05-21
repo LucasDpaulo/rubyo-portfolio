@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { SocialIcons } from "@/components/public/SocialIcons";
+import type { SocialLink } from "@/lib/validators";
 
 type Props = {
   provider: string;
@@ -11,12 +12,12 @@ type Props = {
   title: string;
   aspectRatio: string;
   tag?: string | null;
-  xUrl: string;
+  socials: SocialLink[];
   email: string;
   onClose: () => void;
 };
 
-export function VideoModal({ provider, videoId, title, aspectRatio, tag, xUrl, email, onClose }: Props) {
+export function VideoModal({ provider, videoId, title, aspectRatio, tag, socials, email, onClose }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export function VideoModal({ provider, videoId, title, aspectRatio, tag, xUrl, e
               <h3>{title}</h3>
               <p>{formatLabel}</p>
             </div>
-            <SocialIcons variant="hero" xUrl={xUrl} email={email} />
+            <SocialIcons variant="hero" socials={socials} email={email} />
           </div>
         </motion.div>
       </motion.div>

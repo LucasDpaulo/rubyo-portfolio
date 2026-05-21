@@ -7,6 +7,7 @@ import { EditButton } from "@/components/public/EditButton";
 import { ReorderArrows } from "@/components/public/ReorderArrows";
 import { VideoModal } from "@/components/public/VideoModal";
 import { trackClick } from "@/lib/track";
+import type { SocialLink } from "@/lib/validators";
 
 type Variant = "short" | "long";
 
@@ -16,7 +17,7 @@ export function VideoCard({
   isAdmin = false,
   prevId = null,
   nextId = null,
-  xUrl,
+  socials,
   email,
 }: {
   video: Video;
@@ -24,7 +25,7 @@ export function VideoCard({
   isAdmin?: boolean;
   prevId?: string | null;
   nextId?: string | null;
-  xUrl: string;
+  socials: SocialLink[];
   email: string;
 }) {
   const [playing, setPlaying] = useState(false);
@@ -145,7 +146,7 @@ export function VideoCard({
           title={video.title}
           aspectRatio={video.aspectRatio}
           tag={video.tag}
-          xUrl={xUrl}
+          socials={socials}
           email={email}
           onClose={() => setPlaying(false)}
         />
