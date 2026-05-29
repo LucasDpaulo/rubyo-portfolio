@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const NOTRACK_KEY = "rb_notrack";
+import { NOTRACK_KEY } from "@/lib/track";
 
 export function VisitBeacon() {
   const [notice, setNotice] = useState<string | null>(null);
