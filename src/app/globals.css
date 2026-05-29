@@ -1664,3 +1664,50 @@ body.admin-mode .reorder-arrows {
   font-size: 0.78rem;
   color: rgba(164, 147, 132, 0.7);
 }
+
+.analytics-months {
+  display: flex;
+  flex-direction: column;
+}
+.analytics-month-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(196, 149, 106, 0.1);
+}
+.analytics-month-row:last-child {
+  border-bottom: none;
+}
+.analytics-month-name {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  color: var(--color-cream);
+}
+.analytics-month-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font-size: 0.74rem;
+  color: var(--color-dim);
+  font-variant-numeric: tabular-nums;
+}
+.analytics-month-stats strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.analytics-month-total {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(196, 149, 106, 0.18);
+  font-size: 0.74rem;
+  letter-spacing: 0.5px;
+  color: var(--color-dim);
+}
+.analytics-month-total strong {
+  color: var(--color-cream);
+  font-variant-numeric: tabular-nums;
+}

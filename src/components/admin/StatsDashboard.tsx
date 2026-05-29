@@ -37,26 +37,28 @@ export function StatsDashboard({ data }: { data: StatsPayload }) {
   return (
     <div className="analytics-body">
       <section>
-        <div className="analytics-section-label">Resumo geral</div>
+        <div className="analytics-section-label">
+          Este mês — {data.currentMonth.label}
+        </div>
         <div className="analytics-grid analytics-grid-4">
           <Kpi
             label="Visitas"
-            value={nf(data.total)}
-            sub={`${nf(data.totalUnique)} visitantes únicos`}
+            value={nf(data.currentMonth.visits)}
+            sub={`${nf(data.currentMonth.unique)} visitantes únicos`}
           />
           <Kpi
             label="Tempo médio"
-            value={formatDuration(data.avgDurationMs)}
+            value={formatDuration(data.currentMonth.avgDurationMs)}
             sub="por visita"
           />
           <Kpi
             label="Vídeos abertos"
-            value={nf(data.videoClicks.total)}
+            value={nf(data.currentMonth.videoClicks)}
             sub="cliques no play"
           />
           <Kpi
             label="Cliques em contato"
-            value={nf(s.total)}
+            value={nf(data.currentMonth.contactClicks)}
             sub="X · Discord · Gmail"
           />
         </div>
@@ -125,6 +127,38 @@ export function StatsDashboard({ data }: { data: StatsPayload }) {
             items={data.topCountries.map((c) => ({ label: c.country, value: c.visits }))}
             empty="Sem dados de localização"
           />
+        </div>
+      </section>
+
+      <section>
+        <div className="analytics-section-label">Histórico mensal</div>
+        <div className="analytics-panel">
+          {data.monthly.length === 0 ? (
+            <p className="analytics-empty">
+              Ainda não há meses anteriores. O primeiro histórico aparece quando
+              virar o mês.
+            </p>
+          ) : (
+            <div className="analytics-months">
+              {data.monthly.map((m) => (
+                <div className="analytics-month-row" key={m.month}>
+                  <span className="analytics-month-name">{m.label}</span>
+                  <span className="analytics-month-stats">
+                    <span>
+                      <strong>{nf(m.visits)}</strong> visitas
+                    </span>
+                    <span>{nf(m.unique)} únicos</span>
+                    <span>{nf(m.videoClicks)} vídeos</span>
+                    <span>{nf(m.contactClicks)} contatos</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="analytics-month-total">
+            Total acumulado desde o início:{" "}
+            <strong>{nf(data.total)}</strong> visitas · {nf(data.totalUnique)} únicos
+          </div>
         </div>
       </section>
     </div>

@@ -6,10 +6,22 @@ export type StatsBucket = { date: string; visits: number; unique: number };
 
 export type PeriodStats = { visits: number; unique: number; avgDurationMs: number };
 
+export type MonthBucket = {
+  month: string; // "2026-05"
+  label: string; // "Maio 2026"
+  visits: number;
+  unique: number;
+  videoClicks: number;
+  contactClicks: number;
+  avgDurationMs: number;
+};
+
 export type StatsPayload = {
   total: number;
   totalUnique: number;
   avgDurationMs: number;
+  currentMonth: MonthBucket;
+  monthly: MonthBucket[];
   last24h: PeriodStats;
   last7d: PeriodStats;
   last30d: PeriodStats;
@@ -19,6 +31,28 @@ export type StatsPayload = {
   videoClicks: { total: number; top: { label: string; clicks: number }[] };
   socialClicks: { x: number; discord: number; gmail: number; total: number };
 };
+
+const MONTHS_PT = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
+
+function monthLabel(key: string): string {
+  const [y, m] = key.split("-").map(Number);
+  return `${MONTHS_PT[m - 1] ?? key} ${y}`;
+}
+
+function emptyMonth(key: string): MonthBucket {
+  return {
+    month: key,
+    label: monthLabel(key),
+    visits: 0,
+    unique: 0,
+    videoClicks: 0,
+    contactClicks: 0,
+    avgDurationMs: 0,
+  };
+}
 
 async function bucketStats(sinceMs: number): Promise<PeriodStats> {
   const since = new Date(Date.now() - sinceMs);
@@ -57,6 +91,8 @@ export async function getStats(): Promise<StatsPayload> {
     videoClicksTotal,
     videoTopRaw,
     socialGroupRaw,
+    visitsByMonthRaw,
+    clicksByMonthRaw,
   ] = await Promise.all([
     prisma.visit.count(),
     prisma.visit.findMany({ distinct: ["fingerprint"], select: { fingerprint: true } }),
@@ -97,7 +133,51 @@ export async function getStats(): Promise<StatsPayload> {
       where: { kind: "social" },
       _count: { label: true },
     }),
+    prisma.$queryRaw<
+      { month: string; visits: number; uniques: number; avgduration: number }[]
+    >`
+      SELECT to_char(date_trunc('month', "createdAt"), 'YYYY-MM') AS month,
+             count(*)::int AS visits,
+             count(DISTINCT "fingerprint")::int AS uniques,
+             COALESCE(round(avg("durationMs")), 0)::int AS avgduration
+      FROM "Visit"
+      GROUP BY 1
+      ORDER BY 1 DESC
+    `,
+    prisma.$queryRaw<{ month: string; kind: string; c: number }[]>`
+      SELECT to_char(date_trunc('month', "createdAt"), 'YYYY-MM') AS month,
+             "kind",
+             count(*)::int AS c
+      FROM "ClickEvent"
+      GROUP BY 1, 2
+    `,
   ]);
+
+  const clickByMonth = new Map<string, { video: number; social: number }>();
+  for (const r of clicksByMonthRaw) {
+    const e = clickByMonth.get(r.month) ?? { video: 0, social: 0 };
+    if (r.kind === "video") e.video += r.c;
+    else if (r.kind === "social") e.social += r.c;
+    clickByMonth.set(r.month, e);
+  }
+
+  const allMonths: MonthBucket[] = visitsByMonthRaw.map((r) => {
+    const clicks = clickByMonth.get(r.month) ?? { video: 0, social: 0 };
+    return {
+      month: r.month,
+      label: monthLabel(r.month),
+      visits: r.visits,
+      unique: r.uniques,
+      videoClicks: clicks.video,
+      contactClicks: clicks.social,
+      avgDurationMs: r.avgduration,
+    };
+  });
+
+  const currentKey = new Date().toISOString().slice(0, 7);
+  const currentMonth =
+    allMonths.find((m) => m.month === currentKey) ?? emptyMonth(currentKey);
+  const monthly = allMonths.filter((m) => m.month !== currentKey);
 
   const socialMap = new Map(socialGroupRaw.map((r) => [r.label, r._count.label]));
   const socialClicks = {
@@ -132,6 +212,8 @@ export async function getStats(): Promise<StatsPayload> {
     total,
     totalUnique: totalUniqueRows.length,
     avgDurationMs: Math.round(durAvgAll._avg.durationMs ?? 0),
+    currentMonth,
+    monthly,
     last24h,
     last7d,
     last30d,
