@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type { Video } from "@prisma/client";
 import { VideoCard } from "@/components/public/VideoCard";
 import { Reveal } from "@/components/transitions/Reveal";
@@ -58,11 +58,13 @@ export function VideosGrid({
   isAdmin = false,
   socials,
   email,
+  middleSlot,
 }: {
   videos: Video[];
   isAdmin?: boolean;
   socials: SocialLink[];
   email: string;
+  middleSlot?: ReactNode;
 }) {
   const shorts = videos.filter((v) => v.aspectRatio === "9:16");
   const longs = videos.filter((v) => v.aspectRatio !== "9:16");
@@ -102,6 +104,8 @@ export function VideosGrid({
           </div>
         </Reveal>
       )}
+
+      {middleSlot}
 
       {(longs.length > 0 || isAdmin) && (
         <Reveal style={{ marginTop: "2rem" }}>

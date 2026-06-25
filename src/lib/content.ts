@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import type { HeroContent, ProfileContent } from "@/lib/validators";
+import type { HeroContent, ProfileContent, ClientsContent } from "@/lib/validators";
+import { clientsContentSchema } from "@/lib/validators";
 
 export const DEFAULT_HERO: HeroContent = {
   titleLine1: "EDITOR",
@@ -46,5 +47,17 @@ export async function getVideos() {
     return await prisma.video.findMany({ orderBy: { sortOrder: "asc" } });
   } catch {
     return [];
+  }
+}
+
+export const DEFAULT_CLIENTS: ClientsContent = { items: [] };
+
+export async function getClients(): Promise<ClientsContent> {
+  try {
+    const row = await prisma.siteContent.findUnique({ where: { key: "clients" } });
+    const parsed = clientsContentSchema.safeParse(row?.value);
+    return parsed.success ? parsed.data : DEFAULT_CLIENTS;
+  } catch {
+    return DEFAULT_CLIENTS;
   }
 }

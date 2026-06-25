@@ -50,6 +50,23 @@ export const profileSchema = z.object({
   avatarAdjustments: avatarAdjustmentsSchema.optional(),
 });
 
+export const clientReviewSchema = z.object({
+  logoUrl: z.string().max(500).optional().default(""),
+  logoAdjustments: avatarAdjustmentsSchema.optional(),
+  name: z.string().max(80).optional().default(""),
+  handle: z.string().max(60).optional().default(""),
+  verified: z.boolean().optional().default(false),
+  description: z.string().max(1000).optional().default(""),
+  subscribers: z.string().max(40).optional().default(""),
+  videos: z.string().max(40).optional().default(""),
+  channelUrl: z.string().max(300).optional().default(""),
+  videoIds: z.array(z.string().min(1)).max(100).optional().default([]),
+});
+
+export const clientsContentSchema = z.object({
+  items: z.array(clientReviewSchema).max(50).default([]),
+});
+
 export const uploadRequestSchema = z.object({
   contentType: z.string().regex(/^image\/(png|jpe?g|webp|gif)$/),
   base64: z.string().min(8).max(4_000_000),
@@ -69,6 +86,8 @@ export type HeroContent = z.infer<typeof heroSchema>;
 export type ProfileContent = z.infer<typeof profileSchema>;
 export type SocialLink = z.infer<typeof socialSchema>;
 export type AvatarAdjustments = z.infer<typeof avatarAdjustmentsSchema>;
+export type ClientReview = z.infer<typeof clientReviewSchema>;
+export type ClientsContent = z.infer<typeof clientsContentSchema>;
 
 export const DEFAULT_AVATAR_ADJUSTMENTS: AvatarAdjustments = {
   brightness: 1,

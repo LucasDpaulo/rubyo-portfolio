@@ -31,6 +31,9 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  /* Reserva o espaço da barra de rolagem pra página não "pular" quando um modal
+     trava o scroll (overflow:hidden). Não altera a aparência normal. */
+  scrollbar-gutter: stable;
 }
 @media (min-width: 1920px) {
   html {
@@ -1309,6 +1312,499 @@ body.admin-mode .reorder-arrows {
   align-items: stretch;
   gap: 6px;
   margin-top: 4px;
+}
+
+/* ===================== Clientes (carrossel + canal) ===================== */
+/* fica entre Shorts e Long Form, dentro de .work — só espaçamento vertical,
+   alinhado com os cards de vídeo (sem padding/max-width próprios). */
+.clients {
+  padding: 1rem 0 2.5rem;
+}
+
+/* ícone circular reusável (chip / pop-up) */
+.client-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-bg);
+  border: 2px solid rgba(196, 149, 106, 0.35);
+  flex: none;
+}
+.client-avatar-fallback {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  color: var(--color-accent);
+  line-height: 1;
+}
+.verified-badge {
+  color: var(--color-accent);
+  flex: none;
+  vertical-align: middle;
+}
+
+/* marquee automático (pausa no hover) */
+.clients-marquee {
+  position: relative;
+  overflow: hidden;
+  /* folga vertical pra não cortar o chip quando ele sobe no hover */
+  padding: 14px 0;
+  margin-top: 0.4rem;
+}
+/* fade nas bordas só quando está rolando */
+.clients-marquee.is-scrolling {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+.clients-track {
+  display: flex;
+}
+/* poucos clientes: cards centralizados preenchendo a largura (tamanhos vêm inline) */
+.clients-marquee.is-static .clients-track {
+  width: 100%;
+  justify-content: center;
+  gap: 16px;
+}
+/* muitos clientes (estouram a largura): carrossel infinito */
+.clients-marquee.is-scrolling .clients-track {
+  width: max-content;
+  animation: clients-scroll linear infinite;
+}
+.clients-marquee.is-scrolling .client-chip {
+  margin-right: 16px;
+}
+.clients-marquee.is-scrolling:hover .clients-track {
+  animation-play-state: paused;
+}
+@keyframes clients-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clients-marquee.is-scrolling .clients-track {
+    animation: none;
+  }
+}
+
+/* card do cliente (banner horizontal — largura/padding/gap/fontes vêm inline e escalam) */
+.client-chip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: none;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, var(--color-brown-med), var(--color-brown-dark) 70%);
+  border: 1px solid rgba(196, 149, 106, 0.2);
+  border-radius: 14px;
+  cursor: pointer;
+  color: var(--color-cream);
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.client-chip:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-3px);
+}
+.client-chip-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+.client-chip-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #fff;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.client-chip-name .verified-badge {
+  width: 0.85em;
+  height: 0.85em;
+}
+.client-chip-subs {
+  color: var(--color-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 560px) {
+  .client-chip {
+    flex-direction: column;
+    text-align: center;
+  }
+  .client-chip .client-chip-text {
+    align-items: center;
+  }
+}
+
+.clients-empty {
+  text-align: center;
+  color: var(--color-dim);
+  font-size: 0.9rem;
+  border: 1px dashed rgba(196, 149, 106, 0.2);
+  border-radius: 8px;
+  padding: 3rem 1.5rem;
+  margin-top: 0.6rem;
+}
+
+/* pop-up do canal */
+.channel-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 15px;
+  overflow-y: auto;
+  background: rgba(13, 10, 8, 0.95);
+}
+.channel-modal-shell {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  background: var(--color-brown-dark);
+  border: 1px solid rgba(196, 149, 106, 0.35);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(196, 149, 106, 0.12);
+}
+.channel-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  border: 1px solid rgba(196, 149, 106, 0.3);
+  color: var(--color-cream);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.channel-modal-close:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.channel-header {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(196, 149, 106, 0.15);
+}
+@media (max-width: 560px) {
+  .channel-header {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 14px;
+  }
+}
+.channel-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.channel-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  line-height: 1;
+  margin: 0;
+}
+.channel-name .verified-badge {
+  width: 22px;
+  height: 22px;
+}
+.channel-stats {
+  color: var(--color-dim);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.channel-desc {
+  color: var(--color-cream);
+  opacity: 0.85;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 4px 0 0;
+  max-width: 60ch;
+}
+.channel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  margin-top: 4px;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  border: 1px solid rgba(196, 149, 106, 0.3);
+  border-radius: 999px;
+  padding: 5px 12px;
+  transition: all 0.2s;
+}
+@media (max-width: 560px) {
+  .channel-link {
+    align-self: center;
+  }
+}
+.channel-link:hover {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+.channel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.channel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.channel-grid-long {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.channel-grid-short {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 180px));
+  gap: 16px;
+}
+.channel-empty {
+  text-align: center;
+  color: var(--color-dim);
+  font-size: 0.9rem;
+  padding: 2rem 1rem;
+}
+
+/* editor de clientes (modal) */
+.clients-modal-content {
+  max-width: 560px;
+  width: 92vw;
+}
+.clients-editor {
+  display: flex;
+  flex-direction: column;
+}
+.clients-editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.client-row {
+  border: 1px solid rgba(196, 149, 106, 0.18);
+  border-radius: 10px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.client-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.client-row-index {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+  font-size: 1rem;
+  margin-right: auto;
+}
+.client-row-move {
+  display: flex;
+  gap: 4px;
+}
+.client-move-btn {
+  height: 26px;
+  width: 30px;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid rgba(196, 149, 106, 0.25);
+  color: var(--color-cream);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.client-move-btn:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background: rgba(196, 149, 106, 0.12);
+}
+.client-move-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.client-row-remove {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+.client-row-logo {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.client-edit-circle {
+  width: 92px;
+  height: 92px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-bg);
+  border: 2px solid rgba(196, 149, 106, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.client-edit-circle-empty {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  font-size: 2.4rem;
+  color: var(--color-accent);
+  line-height: 1;
+}
+.client-logo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.client-logo-actions .contact-btn,
+.client-logo-actions .ghost-btn {
+  width: 100%;
+  margin: 0;
+}
+.client-frame-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(196, 149, 106, 0.15);
+  border-radius: 8px;
+  background: rgba(196, 149, 106, 0.04);
+}
+.client-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.client-check-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--color-cream);
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+.client-check-inline input {
+  accent-color: var(--color-accent);
+  width: 16px;
+  height: 16px;
+}
+.client-video-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid rgba(196, 149, 106, 0.15);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 6px;
+}
+.client-video-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-cream);
+  text-align: left;
+  transition: all 0.15s;
+}
+.client-video-option:hover {
+  background: rgba(196, 149, 106, 0.08);
+}
+.client-video-option.is-on {
+  border-color: rgba(196, 149, 106, 0.4);
+  background: rgba(196, 149, 106, 0.12);
+}
+.client-video-check {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(196, 149, 106, 0.4);
+  border-radius: 4px;
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+.client-video-option.is-on .client-video-check {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+}
+.client-video-thumb {
+  width: 48px;
+  height: 28px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--color-brown-med);
+}
+.client-video-thumb-empty {
+  display: inline-block;
+}
+.client-video-title {
+  flex: 1;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.client-video-kind {
+  flex: none;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-dim);
 }
 
 /* ===================== Análise (modal de analytics) ===================== */

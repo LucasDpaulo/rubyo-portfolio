@@ -1,6 +1,6 @@
 "use client";
 
-import type { HeroContent, ProfileContent } from "@/lib/validators";
+import type { HeroContent, ProfileContent, ClientReview } from "@/lib/validators";
 import type { Video } from "@prisma/client";
 
 export type EditPayload =
@@ -12,7 +12,8 @@ export type EditPayload =
   | { type: "socials"; profile: ProfileContent }
   | { type: "avatar"; profile: ProfileContent }
   | { type: "project"; video: Video }
-  | { type: "new-video"; aspectRatio: "16:9" | "9:16" };
+  | { type: "new-video"; aspectRatio: "16:9" | "9:16" }
+  | { type: "clients"; clients: ClientReview[]; videos: Video[] };
 
 export function EditButton({ payload, label }: { payload: EditPayload; label: string }) {
   return (

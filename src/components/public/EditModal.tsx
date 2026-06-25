@@ -6,6 +6,7 @@ import type { EditPayload } from "@/components/public/EditButton";
 import type { HeroContent, ProfileContent, SocialLink } from "@/lib/validators";
 import type { Video } from "@prisma/client";
 import { AvatarEditor } from "@/components/public/AvatarEditor";
+import { ClientsEditor } from "@/components/public/ClientsEditor";
 
 type Fields = Record<string, string>;
 
@@ -56,6 +57,8 @@ function titleFor(p: EditPayload): string {
       return p.aspectRatio === "9:16" ? "NOVO SHORT" : "NOVO LONG FORM";
     case "avatar":
       return "EDITAR FOTO";
+    case "clients":
+      return "EDITAR CLIENTES";
   }
 }
 
@@ -91,6 +94,8 @@ function initialFields(p: EditPayload): Fields {
     case "new-video":
       return { title: "", url: "", tag: "" };
     case "avatar":
+      return {};
+    case "clients":
       return {};
   }
 }
@@ -397,6 +402,7 @@ function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string
         </>
       );
     case "socials":
+    case "clients":
       return null;
     case "project":
     case "new-video":
@@ -512,7 +518,7 @@ export function EditModal() {
       <div
         className={`modal-content edit-modal-content${
           payload?.type === "avatar" ? " avatar-modal-content" : ""
-        }`}
+        }${payload?.type === "clients" ? " clients-modal-content" : ""}`}
       >
         <span className="close-modal" onClick={close} role="button" aria-label="Fechar">
           ×
@@ -521,6 +527,8 @@ export function EditModal() {
 
         {payload?.type === "avatar" ? (
           <AvatarEditor profile={payload.profile} onClose={close} />
+        ) : payload?.type === "clients" ? (
+          <ClientsEditor clients={payload.clients} videos={payload.videos} onClose={close} />
         ) : (
           <>
             <div className="edit-fields">
