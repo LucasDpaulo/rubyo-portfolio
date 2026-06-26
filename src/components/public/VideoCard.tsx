@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Video } from "@prisma/client";
 import { EditButton } from "@/components/public/EditButton";
 import { ReorderArrows } from "@/components/public/ReorderArrows";
 import { VideoModal } from "@/components/public/VideoModal";
+import { HoverPreview } from "@/components/public/HoverPreview";
 import { trackClick } from "@/lib/track";
 import type { SocialLink } from "@/lib/validators";
 
@@ -29,8 +30,32 @@ export function VideoCard({
   email: string;
 }) {
   const [playing, setPlaying] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
+
+  // preview ao manter o mouse parado no card por ~1s (sem abrir o modal)
+  function startPreview() {
+    if (previewTimer.current) clearTimeout(previewTimer.current);
+    previewTimer.current = setTimeout(() => {
+      setMuted(true); // sempre começa mudo (política de autoplay)
+      setPreview(true);
+    }, 1100);
+  }
+  function stopPreview() {
+    if (previewTimer.current) {
+      clearTimeout(previewTimer.current);
+      previewTimer.current = null;
+    }
+    setPreview(false);
+  }
+  useEffect(() => {
+    return () => {
+      if (previewTimer.current) clearTimeout(previewTimer.current);
+    };
+  }, []);
 
   async function handleDelete(e: React.MouseEvent) {
     e.preventDefault();
@@ -50,6 +75,7 @@ export function VideoCard({
   }
 
   function openVideo() {
+    stopPreview();
     if (!isAdmin) trackClick("video", video.title);
     setPlaying(true);
   }
@@ -66,6 +92,11 @@ export function VideoCard({
       ? `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`
       : null;
 
+  const previewSrc =
+    video.provider === "vimeo"
+      ? `https://player.vimeo.com/video/${video.videoId}?autoplay=1&muted=1&loop=1&background=1`
+      : "";
+
   return (
     <>
       <div
@@ -73,6 +104,8 @@ export function VideoCard({
         role="button"
         tabIndex={0}
         onClick={openVideo}
+        onMouseEnter={startPreview}
+        onMouseLeave={stopPreview}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -102,15 +135,59 @@ export function VideoCard({
             }}
           />
         )}
+        {preview &&
+          (video.provider === "vimeo" ? (
+            <iframe
+              className="card-preview"
+              src={previewSrc}
+              title={video.title}
+              allow="autoplay; encrypted-media; picture-in-picture"
+              tabIndex={-1}
+            />
+          ) : (
+            <HoverPreview
+              videoId={video.videoId}
+              muted={muted}
+              aspectRatio={video.aspectRatio}
+              onEnd={() => setPreview(false)}
+            />
+          ))}
         <div className="card-overlay">
           <h3>{video.title}</h3>
           <p>{video.tag || tag}</p>
         </div>
-        <div className="play-circle">
-          <svg viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </div>
+        {!preview && (
+          <div className="play-circle">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        )}
+        {preview && video.provider !== "vimeo" && (
+          <button
+            type="button"
+            className="card-mute-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMuted((m) => !m);
+            }}
+            aria-label={muted ? "Ativar som" : "Desativar som"}
+            title={muted ? "Ativar som" : "Desativar som"}
+          >
+            {muted ? (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 5 6 9H2v6h4l5 4V5z" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 5 6 9H2v6h4l5 4V5z" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            )}
+          </button>
+        )}
         {isAdmin && (
           <div className="card-edit">
             <EditButton payload={{ type: "project", video }} label="Editar vídeo" />

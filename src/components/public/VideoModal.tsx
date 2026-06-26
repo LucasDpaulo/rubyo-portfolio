@@ -33,8 +33,8 @@ export function VideoModal({ provider, videoId, title, aspectRatio, tag, socials
 
   const src =
     provider === "vimeo"
-      ? `https://player.vimeo.com/video/${videoId}?autoplay=1`
-      : `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+      ? `https://player.vimeo.com/video/${videoId}?autoplay=1&quality=1080p`
+      : `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&vq=hd1080&hd=1`;
 
   const isShort = aspectRatio === "9:16";
   const formatLabel = tag || (isShort ? "Vertical" : "Horizontal");
