@@ -129,17 +129,26 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
           {profile.socials.map((s, i) => {
             const icon = s.icon as IconName;
             const label = s.label || LABELS[icon] || icon;
+            const href = resolveHref(s, profile.email, profile.contactSubject, profile.contactMessage);
             const copyText = copyTextFor(s, profile.email);
             return (
               <a
                 key={i}
-                href={resolveHref(s, profile.email, profile.contactSubject, profile.contactMessage)}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-btn"
-                onClick={() => {
-                  if (copyText) handleCopy(copyText, icon);
-                  else trackClick("social", icon);
+                onClick={(e) => {
+                  if (copyText) {
+                    // copia + mostra o toast primeiro; abre a aba depois de uma pausa
+                    e.preventDefault();
+                    handleCopy(copyText, icon);
+                    window.setTimeout(() => {
+                      window.open(href, "_blank", "noopener,noreferrer");
+                    }, 650);
+                  } else {
+                    trackClick("social", icon);
+                  }
                 }}
               >
                 <Icon name={icon} />

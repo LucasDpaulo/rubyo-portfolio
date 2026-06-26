@@ -109,9 +109,17 @@ export function SocialIcons({
             rel="noopener noreferrer"
             title={title}
             className={link}
-            onClick={() => {
+            onClick={(e) => {
               trackClick("social", icon);
-              if (copyText) copyValue(copyText);
+              if (copyText) {
+                // copia + mostra o toast primeiro; abre a aba depois de uma pausa
+                e.preventDefault();
+                copyValue(copyText);
+                const url = href;
+                window.setTimeout(() => {
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }, 650);
+              }
             }}
           >
             <Icon name={icon} />
