@@ -7,6 +7,7 @@ import type { Video } from "@prisma/client";
 import type { ClientReview, SocialLink } from "@/lib/validators";
 import { ClientAvatar, VerifiedBadge } from "@/components/public/ClientAvatar";
 import { VideoCard } from "@/components/public/VideoCard";
+import { parseVideoUrl } from "@/lib/youtube";
 
 export function ClientChannelModal({
   client,
@@ -38,8 +39,31 @@ export function ClientChannelModal({
 
   const ids = new Set(client.videoIds ?? []);
   const mine = videos.filter((v) => ids.has(v.id));
-  const longs = mine.filter((v) => v.aspectRatio !== "9:16");
-  const shorts = mine.filter((v) => v.aspectRatio === "9:16");
+
+  // vídeos adicionados por URL (YouTube/Vimeo) viram objetos Video-like pro VideoCard
+  const urlVideos: Video[] = (client.videoUrls ?? [])
+    .map((vu, i) => {
+      const parsed = parseVideoUrl(vu.url);
+      if (!parsed) return null;
+      const short = /\/shorts\//.test(vu.url);
+      return {
+        id: `u-${i}`,
+        title: vu.title?.trim() || "Vídeo",
+        url: vu.url,
+        provider: parsed.provider,
+        videoId: parsed.videoId,
+        aspectRatio: short ? "9:16" : "16:9",
+        tag: null,
+        sortOrder: 0,
+        createdAt: new Date(0),
+        updatedAt: new Date(0),
+      } as Video;
+    })
+    .filter((v): v is Video => v !== null);
+
+  const all = [...mine, ...urlVideos];
+  const longs = all.filter((v) => v.aspectRatio !== "9:16");
+  const shorts = all.filter((v) => v.aspectRatio === "9:16");
 
   const name = client.name.trim() || "Canal";
   const handle = client.handle?.trim();
@@ -104,7 +128,7 @@ export function ClientChannelModal({
           </header>
 
           <div className="channel-body">
-            {mine.length === 0 ? (
+            {longs.length === 0 && shorts.length === 0 ? (
               <p className="channel-empty">Nenhum vídeo marcado para este cliente ainda.</p>
             ) : (
               <>

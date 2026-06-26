@@ -66,6 +66,16 @@ export const clientReviewSchema = z.object({
   videos: z.string().max(40).optional().default(""),
   channelUrl: z.string().max(300).optional().default(""),
   videoIds: z.array(z.string().min(1)).max(100).optional().default([]),
+  videoUrls: z
+    .array(
+      z.object({
+        url: z.string().min(1).max(300),
+        title: z.string().max(120).optional().default(""),
+      }),
+    )
+    .max(50)
+    .optional()
+    .default([]),
 });
 
 export const clientsContentSchema = z.object({

@@ -1916,6 +1916,30 @@ body.admin-mode .reorder-arrows {
   color: var(--color-dim);
 }
 
+/* vídeos por URL no editor de cliente */
+.client-vurl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.client-vurl-row {
+  display: grid;
+  grid-template-columns: 1fr 100px 32px;
+  gap: 6px;
+  align-items: center;
+}
+.client-vurl-row .admin-input {
+  margin-bottom: 0;
+}
+.client-vurl-remove {
+  width: 32px;
+  height: 38px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+
 /* ===================== Análise (modal de analytics) ===================== */
 .analytics-trigger {
   display: flex;

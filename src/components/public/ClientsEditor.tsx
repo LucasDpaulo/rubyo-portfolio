@@ -21,6 +21,7 @@ const EMPTY: ClientReview = {
   videos: "",
   channelUrl: "",
   videoIds: [],
+  videoUrls: [],
 };
 
 type Preset = { id: string; label: string; adj: Partial<AvatarAdjustments> };
@@ -113,6 +114,13 @@ function ClientRow({
     else next.add(id);
     onChange({ videoIds: Array.from(next) });
   };
+
+  const videoUrls = client.videoUrls ?? [];
+  const addVideoUrl = () => onChange({ videoUrls: [...videoUrls, { url: "", title: "" }] });
+  const updateVideoUrl = (i: number, patch: Partial<{ url: string; title: string }>) =>
+    onChange({ videoUrls: videoUrls.map((v, idx) => (idx === i ? { ...v, ...patch } : v)) });
+  const removeVideoUrl = (i: number) =>
+    onChange({ videoUrls: videoUrls.filter((_, idx) => idx !== i) });
 
   const onFile = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -339,6 +347,45 @@ function ClientRow({
             );
           })}
         </div>
+      )}
+
+      <label className="admin-label">Vídeos por URL (YouTube / outras plataformas)</label>
+      <div className="client-vurl-list">
+        {videoUrls.map((vu, vi) => (
+          <div key={vi} className="client-vurl-row">
+            <input
+              className="admin-input"
+              placeholder="https://youtube.com/watch?v=… ou /shorts/…"
+              value={vu.url}
+              onChange={(e) => updateVideoUrl(vi, { url: e.target.value })}
+            />
+            <input
+              className="admin-input"
+              placeholder="Título (opcional)"
+              value={vu.title ?? ""}
+              onChange={(e) => updateVideoUrl(vi, { title: e.target.value })}
+            />
+            <button
+              type="button"
+              className="danger-btn client-vurl-remove"
+              onClick={() => removeVideoUrl(vi)}
+              aria-label="Remover vídeo"
+              title="Remover vídeo"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+      {videoUrls.length < 50 && (
+        <button
+          type="button"
+          className="contact-btn"
+          onClick={addVideoUrl}
+          style={{ opacity: 0.85, marginBottom: 6 }}
+        >
+          + ADICIONAR VÍDEO POR URL
+        </button>
       )}
 
       {err && <p className="login-error">{err}</p>}
