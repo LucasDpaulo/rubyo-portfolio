@@ -23,13 +23,25 @@ function resolveHref(s: SocialLink, email: string): string {
     const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
     return addr ? `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}` : "#";
   }
+  if (s.icon === "discord") {
+    if (!url) return "#";
+    if (url.startsWith("http")) return url;
+    if (url.includes("/")) return `https://${url}`; // ex: discord.com/users/...
+    return "https://discord.com/app"; // handle puro → abre o app
+  }
   return url || "#";
 }
 
-function isCopyable(s: SocialLink): boolean {
-  if (s.icon !== "discord") return false;
-  const url = (s.url || "").trim();
-  return !!url && !url.startsWith("http");
+function copyTextFor(s: SocialLink, email: string): string | null {
+  if (s.icon === "email") return emailAddress(s, email);
+  if (s.icon === "discord") {
+    const url = (s.url || "").trim();
+    if (!url) return null;
+    if (url.startsWith("http")) return url;
+    if (url.includes("/")) return `https://${url}`;
+    return url;
+  }
+  return null;
 }
 
 function emailAddress(s: SocialLink, email: string): string {
@@ -110,24 +122,7 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
           {profile.socials.map((s, i) => {
             const icon = s.icon as IconName;
             const label = s.label || LABELS[icon] || icon;
-
-            if (isCopyable(s)) {
-              return (
-                <a
-                  key={i}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleCopy(s.url, icon);
-                  }}
-                  className="contact-btn"
-                >
-                  <Icon name={icon} />
-                  {label}
-                </a>
-              );
-            }
-
+            const copyText = copyTextFor(s, profile.email);
             return (
               <a
                 key={i}
@@ -136,7 +131,7 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
                 rel="noopener noreferrer"
                 className="contact-btn"
                 onClick={() => {
-                  if (s.icon === "email") handleCopy(emailAddress(s, profile.email), icon);
+                  if (copyText) handleCopy(copyText, icon);
                   else trackClick("social", icon);
                 }}
               >

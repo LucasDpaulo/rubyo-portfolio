@@ -7,28 +7,41 @@ import { trackClick } from "@/lib/track";
 
 type Variant = "hero" | "footer";
 
-function resolveHref(s: SocialLink, email: string): string {
-  const url = (s.url || "").trim();
-  if (s.icon === "email") {
-    // sempre abre o Gmail compose (web), mesmo se estiver salvo como mailto:
-    if (url.startsWith("http")) return url; // link http explícito → respeita
-    const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
-    return addr ? `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}` : "#";
-  }
-  return url || "#";
-}
-
-function isCopyable(s: SocialLink): boolean {
-  if (s.icon !== "discord") return false;
-  const url = (s.url || "").trim();
-  return !!url && !url.startsWith("http");
-}
-
 function emailAddress(s: SocialLink, email: string): string {
   const url = (s.url || "").trim();
   if (url.startsWith("mailto:")) return url.slice(7);
   if (url.startsWith("http")) return email;
   return url || email;
+}
+
+function resolveHref(s: SocialLink, email: string): string {
+  const url = (s.url || "").trim();
+  if (s.icon === "email") {
+    // sempre abre o Gmail compose (web), mesmo salvo como mailto:
+    if (url.startsWith("http")) return url;
+    const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
+    return addr ? `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}` : "#";
+  }
+  if (s.icon === "discord") {
+    if (!url) return "#";
+    if (url.startsWith("http")) return url;
+    if (url.includes("/")) return `https://${url}`; // ex: discord.com/users/... ou discord.gg/...
+    return "https://discord.com/app"; // handle puro → abre o app do Discord
+  }
+  return url || "#";
+}
+
+// o que copiar ao clicar (email/discord). null = não copia.
+function copyTextFor(s: SocialLink, email: string): string | null {
+  if (s.icon === "email") return emailAddress(s, email);
+  if (s.icon === "discord") {
+    const url = (s.url || "").trim();
+    if (!url) return null;
+    if (url.startsWith("http")) return url;
+    if (url.includes("/")) return `https://${url}`;
+    return url; // handle
+  }
+  return null;
 }
 
 function flashToast() {
@@ -67,14 +80,6 @@ export function SocialIcons({
     document.body.removeChild(temp);
   }, []);
 
-  const handleCopy = useCallback(
-    (value: string, icon: IconName) => {
-      trackClick("social", icon);
-      copyValue(value);
-    },
-    [copyValue],
-  );
-
   const wrap = `${variant === "footer" ? "footer-icons" : "social-icons"} icons-${size}`;
   const link = variant === "footer" ? "footer-icon-link" : "icon-link";
 
@@ -83,25 +88,8 @@ export function SocialIcons({
       {socials.map((s, i) => {
         const icon = s.icon as IconName;
         const title = s.label || s.icon;
-
-        if (isCopyable(s)) {
-          return (
-            <a
-              key={i}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleCopy(s.url, icon);
-              }}
-              title={`${title} — copiar`}
-              className={link}
-            >
-              <Icon name={icon} />
-            </a>
-          );
-        }
-
         const href = resolveHref(s, email);
+        const copyText = copyTextFor(s, email);
         return (
           <a
             key={i}
@@ -112,7 +100,7 @@ export function SocialIcons({
             className={link}
             onClick={() => {
               trackClick("social", icon);
-              if (s.icon === "email") copyValue(emailAddress(s, email));
+              if (copyText) copyValue(copyText);
             }}
           >
             <Icon name={icon} />
