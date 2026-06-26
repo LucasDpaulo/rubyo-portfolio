@@ -72,7 +72,7 @@ export function ClientChannelModal({
   const description = client.description?.trim();
   const channelUrl = client.channelUrl?.trim();
 
-  const statLine = [handle ? `@${handle}` : null, subs ? `${subs} inscritos` : null, vids ? `${vids} vídeos` : null]
+  const statLine = [handle ? `@${handle}` : null, subs ? `${subs} subscribers` : null, vids ? `${vids} videos` : null]
     .filter(Boolean)
     .join("  ·  ");
 
@@ -121,7 +121,7 @@ export function ClientChannelModal({
                     <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" />
                     <path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
                   </svg>
-                  Visitar canal
+                  Visit channel
                 </a>
               )}
             </div>
@@ -129,12 +129,12 @@ export function ClientChannelModal({
 
           <div className="channel-body">
             {longs.length === 0 && shorts.length === 0 ? (
-              <p className="channel-empty">Nenhum vídeo marcado para este cliente ainda.</p>
+              <p className="channel-empty">No videos for this client yet.</p>
             ) : (
               <>
                 {longs.length > 0 && (
                   <section className="channel-section">
-                    <span className="section-label">Vídeos</span>
+                    <span className="section-label">Videos</span>
                     <div className="channel-grid-long">
                       {longs.map((v) => (
                         <VideoCard key={v.id} video={v} variant="long" socials={socials} email={email} />
