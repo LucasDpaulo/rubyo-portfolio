@@ -1170,6 +1170,32 @@ body.admin-mode .reorder-arrows {
   line-height: 1.4;
 }
 
+/* controle segmentado (tamanho / estilo no editor) */
+.seg-control {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.seg-btn {
+  flex: 1;
+  padding: 8px 6px;
+  font-size: 0.78rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(196, 149, 106, 0.3);
+  border-radius: 4px;
+  color: var(--color-cream);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.seg-btn:hover {
+  border-color: var(--color-accent);
+}
+.seg-btn.is-on {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
 .avatar-edit-wrapper {
   width: fit-content;
   margin: 0 auto 1.5rem;

@@ -100,7 +100,12 @@ function initialFields(p: EditPayload): Fields {
     case "clients":
       return {};
     case "footer":
-      return { footerText: p.profile.footerText ?? "" };
+      return {
+        footerText: p.profile.footerText ?? "",
+        footerSize: p.profile.footerSize ?? "sm",
+        footerBold: p.profile.footerBold ? "1" : "",
+        footerItalic: p.profile.footerItalic ? "1" : "",
+      };
   }
 }
 
@@ -140,6 +145,12 @@ async function save(
       email: p.type === "socials" ? fields.email : p.profile.email,
       socials: p.type === "socials" ? socials : p.profile.socials,
       footerText: p.type === "footer" ? fields.footerText : p.profile.footerText,
+      footerSize:
+        p.type === "footer"
+          ? ((fields.footerSize as "sm" | "md" | "lg") || "sm")
+          : p.profile.footerSize,
+      footerBold: p.type === "footer" ? fields.footerBold === "1" : p.profile.footerBold,
+      footerItalic: p.type === "footer" ? fields.footerItalic === "1" : p.profile.footerItalic,
     };
     const res = await fetch("/api/admin/profile", {
       method: "PUT",
@@ -422,8 +433,45 @@ function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string
             onChange={(e) => set("footerText", e.target.value)}
           />
           <p className="admin-hint">
-            Deixe em branco para usar o padrão (© ano · NOME · CARGO).
+            Texto livre — use o separador que quiser (·, –, |, etc.). Em branco usa o padrão (©
+            ano · NOME · CARGO).
           </p>
+
+          <label className="admin-label">Tamanho</label>
+          <div className="seg-control">
+            {(["sm", "md", "lg"] as const).map((s) => (
+              <button
+                key={s}
+                type="button"
+                className={`seg-btn${(fields.footerSize || "sm") === s ? " is-on" : ""}`}
+                onClick={() => set("footerSize", s)}
+              >
+                {s === "sm" ? "Pequeno" : s === "md" ? "Médio" : "Grande"}
+              </button>
+            ))}
+          </div>
+
+          <label className="admin-label" style={{ marginTop: 12 }}>
+            Estilo
+          </label>
+          <div className="seg-control">
+            <button
+              type="button"
+              className={`seg-btn${fields.footerBold === "1" ? " is-on" : ""}`}
+              style={{ fontWeight: 700 }}
+              onClick={() => set("footerBold", fields.footerBold === "1" ? "" : "1")}
+            >
+              Negrito
+            </button>
+            <button
+              type="button"
+              className={`seg-btn${fields.footerItalic === "1" ? " is-on" : ""}`}
+              style={{ fontStyle: "italic" }}
+              onClick={() => set("footerItalic", fields.footerItalic === "1" ? "" : "1")}
+            >
+              Itálico
+            </button>
+          </div>
         </>
       );
     case "socials":

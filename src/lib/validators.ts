@@ -49,6 +49,10 @@ export const profileSchema = z.object({
   avatarUrl2: z.string().max(500).optional().default(""),
   avatarAdjustments: avatarAdjustmentsSchema.optional(),
   footerText: z.string().max(120).optional().default(""),
+  footerSize: z.enum(["sm", "md", "lg"]).optional().default("sm"),
+  footerBold: z.boolean().optional().default(false),
+  footerItalic: z.boolean().optional().default(false),
+  iconSize: z.enum(["sm", "md", "lg"]).optional().default("md"),
 });
 
 export const clientReviewSchema = z.object({

@@ -18,6 +18,10 @@ export const DEFAULT_PROFILE: ProfileContent = {
   avatarUrl: "",
   avatarUrl2: "",
   footerText: "",
+  footerSize: "sm",
+  footerBold: false,
+  footerItalic: false,
+  iconSize: "md",
   socials: [
     { label: "@rubyoroberto", url: "https://x.com/rubyoroberto", icon: "x" },
     { label: "Discord", url: "#", icon: "discord" },
