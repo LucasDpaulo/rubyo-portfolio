@@ -32,6 +32,13 @@ function isCopyable(s: SocialLink): boolean {
   return !!url && !url.startsWith("http");
 }
 
+function emailAddress(s: SocialLink, email: string): string {
+  const url = (s.url || "").trim();
+  if (url.startsWith("mailto:")) return url.slice(7);
+  if (url.startsWith("http")) return email;
+  return url || email;
+}
+
 function flashToast(text: string) {
   const toast = document.getElementById("toast");
   if (!toast) return;
@@ -128,7 +135,10 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-btn"
-                onClick={() => trackClick("social", icon)}
+                onClick={() => {
+                  if (s.icon === "email") handleCopy(emailAddress(s, profile.email), icon);
+                  else trackClick("social", icon);
+                }}
               >
                 <Icon name={icon} />
                 {label}

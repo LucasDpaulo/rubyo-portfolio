@@ -24,6 +24,13 @@ function isCopyable(s: SocialLink): boolean {
   return !!url && !url.startsWith("http");
 }
 
+function emailAddress(s: SocialLink, email: string): string {
+  const url = (s.url || "").trim();
+  if (url.startsWith("mailto:")) return url.slice(7);
+  if (url.startsWith("http")) return email;
+  return url || email;
+}
+
 function flashToast() {
   const toast = document.getElementById("toast");
   if (!toast) return;
@@ -46,8 +53,7 @@ export function SocialIcons({
   email: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const handleCopy = useCallback((value: string, icon: IconName) => {
-    trackClick("social", icon);
+  const copyValue = useCallback((value: string) => {
     const temp = document.createElement("input");
     temp.value = value;
     document.body.appendChild(temp);
@@ -60,6 +66,14 @@ export function SocialIcons({
     }
     document.body.removeChild(temp);
   }, []);
+
+  const handleCopy = useCallback(
+    (value: string, icon: IconName) => {
+      trackClick("social", icon);
+      copyValue(value);
+    },
+    [copyValue],
+  );
 
   const wrap = `${variant === "footer" ? "footer-icons" : "social-icons"} icons-${size}`;
   const link = variant === "footer" ? "footer-icon-link" : "icon-link";
@@ -96,7 +110,10 @@ export function SocialIcons({
             rel="noopener noreferrer"
             title={title}
             className={link}
-            onClick={() => trackClick("social", icon)}
+            onClick={() => {
+              trackClick("social", icon);
+              if (s.icon === "email") copyValue(emailAddress(s, email));
+            }}
           >
             <Icon name={icon} />
           </a>
