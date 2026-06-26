@@ -38,10 +38,12 @@ export function SocialIcons({
   variant = "hero",
   socials,
   email,
+  size = "md",
 }: {
   variant?: Variant;
   socials: SocialLink[];
   email: string;
+  size?: "sm" | "md" | "lg";
 }) {
   const handleCopy = useCallback((value: string, icon: IconName) => {
     trackClick("social", icon);
@@ -58,7 +60,7 @@ export function SocialIcons({
     document.body.removeChild(temp);
   }, []);
 
-  const wrap = variant === "footer" ? "footer-icons" : "social-icons";
+  const wrap = `${variant === "footer" ? "footer-icons" : "social-icons"} icons-${size}`;
   const link = variant === "footer" ? "footer-icon-link" : "icon-link";
 
   return (

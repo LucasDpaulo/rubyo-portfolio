@@ -86,7 +86,7 @@ function initialFields(p: EditPayload): Fields {
     case "role":
       return { role: p.profile.role };
     case "socials":
-      return { email: p.profile.email };
+      return { email: p.profile.email, iconSize: p.profile.iconSize ?? "md" };
     case "project":
       return {
         title: p.video.title,
@@ -151,6 +151,10 @@ async function save(
           : p.profile.footerSize,
       footerBold: p.type === "footer" ? fields.footerBold === "1" : p.profile.footerBold,
       footerItalic: p.type === "footer" ? fields.footerItalic === "1" : p.profile.footerItalic,
+      iconSize:
+        p.type === "socials"
+          ? ((fields.iconSize as "sm" | "md" | "lg") || "md")
+          : p.profile.iconSize,
     };
     const res = await fetch("/api/admin/profile", {
       method: "PUT",
@@ -198,13 +202,17 @@ async function save(
 function SocialsEditor({
   socials,
   email,
+  iconSize,
   setSocials,
   setEmail,
+  setIconSize,
 }: {
   socials: SocialLink[];
   email: string;
+  iconSize: "sm" | "md" | "lg";
   setSocials: (next: SocialLink[]) => void;
   setEmail: (v: string) => void;
+  setIconSize: (v: "sm" | "md" | "lg") => void;
 }) {
   function update(i: number, patch: Partial<SocialLink>) {
     setSocials(socials.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
@@ -238,6 +246,20 @@ function SocialsEditor({
         onChange={(e) => setEmail(e.target.value)}
       />
       <p className="admin-hint">Usado no CTA do rodapé. Cada link de contato é editado abaixo.</p>
+
+      <label className="admin-label">Tamanho dos ícones</label>
+      <div className="seg-control">
+        {(["sm", "md", "lg"] as const).map((s) => (
+          <button
+            key={s}
+            type="button"
+            className={`seg-btn${iconSize === s ? " is-on" : ""}`}
+            onClick={() => setIconSize(s)}
+          >
+            {s === "sm" ? "Pequeno" : s === "md" ? "Médio" : "Grande"}
+          </button>
+        ))}
+      </div>
 
       <label className="admin-label" style={{ marginTop: 8 }}>
         Links de contato
@@ -619,8 +641,10 @@ export function EditModal() {
                 <SocialsEditor
                   socials={socials}
                   email={fields.email ?? ""}
+                  iconSize={(fields.iconSize as "sm" | "md" | "lg") ?? "md"}
                   setSocials={setSocials}
                   setEmail={(v) => setFields((prev) => ({ ...prev, email: v }))}
+                  setIconSize={(v) => setFields((prev) => ({ ...prev, iconSize: v }))}
                 />
               ) : (
                 payload &&

@@ -28,7 +28,12 @@ export function Footer({
   // chegar à zona de gatilho (~60% da tela), então ficaria invisível.
   return (
     <footer id="contact" className="site-footer">
-      <SocialIcons variant="footer" socials={profile.socials} email={profile.email} />
+      <SocialIcons
+        variant="footer"
+        socials={profile.socials}
+        email={profile.email}
+        size={profile.iconSize}
+      />
       <div className="editable-wrapper footer-edit-wrap">
         <p className="footer-text" style={textStyle}>
           {text}

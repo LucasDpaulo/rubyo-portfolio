@@ -696,6 +696,40 @@ body.admin-mode .profile-analytics-btn {
   letter-spacing: 1px;
 }
 
+/* tamanho dos ícones sociais (md = padrão; sm/lg ajustam) */
+.footer-icons.icons-sm .footer-icon-link {
+  width: 38px;
+  height: 38px;
+}
+.footer-icons.icons-sm .footer-icon-link svg {
+  width: 18px;
+  height: 18px;
+}
+.footer-icons.icons-lg .footer-icon-link {
+  width: 56px;
+  height: 56px;
+}
+.footer-icons.icons-lg .footer-icon-link svg {
+  width: 28px;
+  height: 28px;
+}
+.social-icons.icons-sm .icon-link {
+  width: 30px;
+  height: 30px;
+}
+.social-icons.icons-sm .icon-link svg {
+  width: 14px;
+  height: 14px;
+}
+.social-icons.icons-lg .icon-link {
+  width: 44px;
+  height: 44px;
+}
+.social-icons.icons-lg .icon-link svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* ─── MODAL (contact) ─────────────────────────────────────────────── */
 .modal {
   position: fixed;
