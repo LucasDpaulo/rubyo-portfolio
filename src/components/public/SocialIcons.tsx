@@ -7,6 +7,10 @@ import { trackClick } from "@/lib/track";
 
 type Variant = "hero" | "footer";
 
+// mensagem pré-preenchida ao abrir o Gmail
+const CONTACT_SUBJECT = "Edição de vídeo";
+const CONTACT_BODY = "Olá! Estou interessado em editar um vídeo.";
+
 function emailAddress(s: SocialLink, email: string): string {
   const url = (s.url || "").trim();
   if (url.startsWith("mailto:")) return url.slice(7);
@@ -17,10 +21,11 @@ function emailAddress(s: SocialLink, email: string): string {
 function resolveHref(s: SocialLink, email: string): string {
   const url = (s.url || "").trim();
   if (s.icon === "email") {
-    // sempre abre o Gmail compose (web), mesmo salvo como mailto:
+    // sempre abre o Gmail compose (web), com assunto + mensagem prontos
     if (url.startsWith("http")) return url;
     const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
-    return addr ? `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}` : "#";
+    if (!addr) return "#";
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${encodeURIComponent(CONTACT_SUBJECT)}&body=${encodeURIComponent(CONTACT_BODY)}`;
   }
   if (s.icon === "discord") {
     if (!url) return "#";

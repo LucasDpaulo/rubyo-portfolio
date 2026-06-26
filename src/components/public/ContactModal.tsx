@@ -15,13 +15,18 @@ const LABELS: Record<IconName, string> = {
   play: "",
 };
 
+// mensagem pré-preenchida ao abrir o Gmail
+const CONTACT_SUBJECT = "Edição de vídeo";
+const CONTACT_BODY = "Olá! Estou interessado em editar um vídeo.";
+
 function resolveHref(s: SocialLink, email: string): string {
   const url = (s.url || "").trim();
   if (s.icon === "email") {
-    // sempre abre o Gmail compose (web), mesmo se estiver salvo como mailto:
-    if (url.startsWith("http")) return url; // link http explícito → respeita
+    // sempre abre o Gmail compose (web), com assunto + mensagem prontos
+    if (url.startsWith("http")) return url;
     const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
-    return addr ? `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}` : "#";
+    if (!addr) return "#";
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${encodeURIComponent(CONTACT_SUBJECT)}&body=${encodeURIComponent(CONTACT_BODY)}`;
   }
   if (s.icon === "discord") {
     if (!url) return "#";
