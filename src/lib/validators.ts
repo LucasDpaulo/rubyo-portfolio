@@ -48,6 +48,7 @@ export const profileSchema = z.object({
   avatarUrl: z.string().max(500).optional().default(""),
   avatarUrl2: z.string().max(500).optional().default(""),
   avatarAdjustments: avatarAdjustmentsSchema.optional(),
+  footerText: z.string().max(120).optional().default(""),
 });
 
 export const clientReviewSchema = z.object({

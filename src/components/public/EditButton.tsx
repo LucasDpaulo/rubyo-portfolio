@@ -13,7 +13,8 @@ export type EditPayload =
   | { type: "avatar"; profile: ProfileContent }
   | { type: "project"; video: Video }
   | { type: "new-video"; aspectRatio: "16:9" | "9:16" }
-  | { type: "clients"; clients: ClientReview[]; videos: Video[] };
+  | { type: "clients"; clients: ClientReview[]; videos: Video[] }
+  | { type: "footer"; profile: ProfileContent };
 
 export function EditButton({ payload, label }: { payload: EditPayload; label: string }) {
   return (

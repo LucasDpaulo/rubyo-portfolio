@@ -43,7 +43,7 @@ export default async function HomePage() {
           />
         }
       />
-      <Footer profile={profile} />
+      <Footer profile={profile} isAdmin={isAdmin} />
       <ContactModal profile={profile} />
       <LoginModal />
       {isAdmin && <EditModal />}

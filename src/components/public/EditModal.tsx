@@ -59,6 +59,8 @@ function titleFor(p: EditPayload): string {
       return "EDITAR FOTO";
     case "clients":
       return "EDITAR CLIENTES";
+    case "footer":
+      return "EDITAR RODAPÉ";
   }
 }
 
@@ -97,6 +99,8 @@ function initialFields(p: EditPayload): Fields {
       return {};
     case "clients":
       return {};
+    case "footer":
+      return { footerText: p.profile.footerText ?? "" };
   }
 }
 
@@ -123,13 +127,19 @@ async function save(
     return;
   }
 
-  if (p.type === "name" || p.type === "role" || p.type === "socials") {
+  if (
+    p.type === "name" ||
+    p.type === "role" ||
+    p.type === "socials" ||
+    p.type === "footer"
+  ) {
     const next: ProfileContent = {
       ...p.profile,
       name: p.type === "name" ? fields.name : p.profile.name,
       role: p.type === "role" ? fields.role : p.profile.role,
       email: p.type === "socials" ? fields.email : p.profile.email,
       socials: p.type === "socials" ? socials : p.profile.socials,
+      footerText: p.type === "footer" ? fields.footerText : p.profile.footerText,
     };
     const res = await fetch("/api/admin/profile", {
       method: "PUT",
@@ -399,6 +409,21 @@ function renderInputs(p: EditPayload, fields: Fields, set: (k: string, v: string
             value={fields.role}
             onChange={(e) => set("role", e.target.value)}
           />
+        </>
+      );
+    case "footer":
+      return (
+        <>
+          <label className="admin-label">Texto do rodapé</label>
+          <input
+            className="admin-input"
+            value={fields.footerText}
+            placeholder="© 2026 · ROBERTO · EDITOR"
+            onChange={(e) => set("footerText", e.target.value)}
+          />
+          <p className="admin-hint">
+            Deixe em branco para usar o padrão (© ano · NOME · CARGO).
+          </p>
         </>
       );
     case "socials":
