@@ -20,12 +20,17 @@ export function Reveal({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            // entrou na zona (~60% da tela) → anima
             entry.target.classList.add("active");
-            obs.unobserve(entry.target);
+          } else if (entry.boundingClientRect.top > 0) {
+            // saiu por baixo (ou ainda não chegou) → reseta pra re-animar ao descer de novo
+            entry.target.classList.remove("active");
           }
+          // saiu por cima (top < 0): mantém visível, sem re-animar ao rolar pra cima
         });
       },
-      { threshold: 0.1 },
+      // dispara quando o elemento sobe até ~60% da tela (não lá no rodapé)
+      { threshold: 0, rootMargin: "0px 0px -40% 0px" },
     );
     obs.observe(el);
     return () => obs.disconnect();
