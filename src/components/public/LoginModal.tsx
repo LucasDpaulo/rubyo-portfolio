@@ -37,6 +37,16 @@ export function LoginModal() {
     setPassword("");
   }, []);
 
+  // ESC fecha o modal
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, close]);
+
   const submit = useCallback(async () => {
     if (!email || !password) return;
     setError(null);

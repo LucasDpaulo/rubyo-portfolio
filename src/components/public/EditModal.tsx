@@ -494,6 +494,16 @@ export function EditModal() {
     setError(null);
   }, []);
 
+  // ESC fecha o modal
+  useEffect(() => {
+    if (!payload) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [payload, close]);
+
   const onSave = useCallback(async () => {
     if (!payload) return;
     setSaving(true);
