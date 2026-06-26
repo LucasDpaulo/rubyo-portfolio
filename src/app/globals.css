@@ -1729,8 +1729,22 @@ body.admin-mode .reorder-arrows {
 .client-row {
   border: 1px solid rgba(196, 149, 106, 0.18);
   border-radius: 10px;
-  padding: 14px;
+  padding: 18px 16px;
   background: rgba(0, 0, 0, 0.2);
+}
+/* mais respiro entre os grupos de campos do editor de cliente */
+.client-row > .admin-label {
+  margin-top: 16px;
+}
+.client-row .client-stats-grid {
+  margin-top: 16px;
+}
+.client-row .client-check-inline {
+  margin-top: 12px;
+  margin-bottom: 14px;
+}
+.client-row .client-video-picker {
+  margin-top: 2px;
 }
 .client-row-head {
   display: flex;
