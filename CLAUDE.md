@@ -233,3 +233,35 @@ Agora:
 **Próximos passos / onde paramos:**
 - Amanhã: `git push origin main`, esperar deploy ficar Ready (`vercel ls`), forçar alias com `vercel alias set <hash>-lucashs-projects.vercel.app rubyo.vercel.app`
 - Possível polimento se o user pedir: drag-reorder (em vez de só setas), preview ao vivo do contato dentro do modal de edição
+
+## Sessão 2026-06-25/26
+
+**Setup local (reclone numa máquina nova):**
+- Repo clonado em `/home/atomos/Documentos/lucas/juninho/rubyo-portfolio`. `npm install` ok.
+- `vercel` e `neonctl` instalados via npm global com prefixo em `~/.local` (`~/.npmrc` → `prefix=$HOME/.local`, já no PATH) — `/usr/local` exigia root.
+- Vercel logado: `lucashiag0` / team `lucashs-projects`. Diretório linkado ao projeto **`ruby`**.
+- Neon logado via `neonctl` (`lucasb.hiago87`), org `org-gentle-pond-43389937`, projeto `shy-cell-56903702`.
+- ⚠️ **GOTCHA**: TODAS as env vars de prod na Vercel são **Sensitive** → `vercel env pull` baixa as chaves **vazias**. Solução: `DATABASE_URL` pego via `neonctl connection-string ... --pooled false`; `AUTH_SECRET`/`NEXTAUTH_SECRET` **gerados localmente** (`openssl rand -base64 32`); `NEXTAUTH_URL=http://localhost:3000`. Admin já existe no DB (`roberto@gmail.com`/`editor`), então `ADMIN_*` não importam local.
+- Dev local segue escrevendo no **Neon de PROD** (mesmo banco do site no ar).
+
+**Features entregues (na `main`, pushadas, deploy no ar):**
+1. **Seção CLIENTES** (carrossel) — entre Shorts e Long Form (via `middleSlot` no `VideosGrid`). 1 cliente = banner; 2+ = carrossel rolando (pausa no hover) que repete pra preencher. Clique abre **pop-up do "canal"** (header estilo YouTube + grade dos vídeos do portfólio marcados pra ele). Ícone circular = mesmo modelo do avatar. Edição inline (✏️) com upload de logo + checklist de vídeos. Dados em `SiteContent` key `clients`. (Commit base `ce6dc48`.)
+2. **Reveal melhorado** — `rootMargin -40%` (dispara a ~60% da tela) + re-anima ao rolar (toggle). ⚠️ Quebra elementos **no fim da página** (não alcançam o gatilho) — por isso o **rodapé não usa Reveal**.
+3. **Preview de hover nos vídeos** (`HoverPreview.tsx`) — segura o mouse ~1s → toca **10s** mudo via **YouTube IFrame API**. Ícone de som (toggle). Fim suave aos 10s (fade som + escurece → volta pra thumb, sem loop). **HD**: iframe em tamanho intrínseco 1280×720 escalado pra caber + corta a UI do YouTube. **Autoplay confiável**: iframe criado manualmente com `allow="autoplay"` ANTES do load (a YT API criava sem permissão → ficava pausado). Modal de vídeo com `vq=hd1080`.
+4. **Rodapé editável** — `footerText` (texto livre) + formatação `footerSize`/`footerBold`/`footerItalic`. Editor "EDITAR RODAPÉ" (novo tipo `footer` no `EditPayload`/`EditModal`).
+5. **Tamanho dos ícones sociais** — `iconSize` (sm/md/lg) no editor "EDITAR LINKS". Aplica no hero + rodapé (`SocialIcons` ganhou prop `size` → classe `icons-*`).
+6. **ESC fecha pop-ups** — adicionado em EditModal, ContactModal, LoginModal (os outros já tinham).
+7. **`scrollbar-gutter: stable`** no `html` — modais não deslocam mais o layout ao travar scroll.
+
+**Schema**: `profileSchema` ganhou `footerText, footerSize, footerBold, footerItalic, iconSize`. `clientsContentSchema` (key `clients`). Sem migração de banco (tudo em `SiteContent` JSON).
+
+**Decisões importantes:**
+- ⚠️ **NÃO mexer na capa/Hero** — foi feito um redesign (coluna centralizada + título gigante) e o usuário **rejeitou**; a capa fica no **original lado-a-lado** (card de perfil na lateral + título à direita). O redesign foi revertido. Se pedir "melhorar visual", confirmar que NÃO é na capa.
+- Trabalhar em **commits pequenos** (o usuário perdeu trabalho não-commitado uma vez; agora commitamos cada feature).
+
+**Deploy / alias (resolvido o mistério dos "dois links"):**
+- `juninho-zeta.vercel.app` = **domínio de produção automático** (atualiza sozinho a cada deploy).
+- `rubyo.vercel.app` = **alias manual** que precisa `vercel alias set` após CADA deploy (estava travado num deploy de 28 dias porque o passo manual parou de ser feito).
+- ⚠️ O **git push NÃO disparou auto-deploy** nesta sessão → deploy feito manual: `vercel --prod --yes`. Depois `vercel alias set <hash>-lucashs-projects.vercel.app rubyo.vercel.app`.
+
+**Estado final:** `main` = `9ee39a5` (histórico limpo, sem o par hero-add/revert). Deploy `ruby-pu37wvh43` no ar. **rubyo.vercel.app e juninho-zeta.vercel.app ambos na versão nova** (confirmado: HTML tem `footer-edit-wrap`, `icons-md`, `clients-marquee`).
