@@ -18,26 +18,18 @@ const LABELS: Record<IconName, string> = {
 function resolveHref(s: SocialLink, email: string): string {
   const url = (s.url || "").trim();
   if (s.icon === "email") {
-    if (url.startsWith("http") || url.startsWith("mailto:")) return url;
-    const addr = url || email;
+    // sempre abre o Gmail compose (web), mesmo se estiver salvo como mailto:
+    if (url.startsWith("http")) return url; // link http explícito → respeita
+    const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
     return addr ? `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}` : "#";
   }
   return url || "#";
 }
 
 function isCopyable(s: SocialLink): boolean {
-  if (s.icon === "email") return true; // email é copiado (como o discord), não abre link
   if (s.icon !== "discord") return false;
   const url = (s.url || "").trim();
   return !!url && !url.startsWith("http");
-}
-
-function emailAddress(s: SocialLink, email: string): string {
-  const url = (s.url || "").trim();
-  if (!url) return email;
-  if (url.startsWith("mailto:")) return url.slice(7);
-  if (url.startsWith("http")) return email;
-  return url;
 }
 
 function flashToast(text: string) {
@@ -119,7 +111,7 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleCopy(s.icon === "email" ? emailAddress(s, profile.email) : s.url, icon);
+                    handleCopy(s.url, icon);
                   }}
                   className="contact-btn"
                 >
