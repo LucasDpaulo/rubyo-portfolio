@@ -15,18 +15,20 @@ const LABELS: Record<IconName, string> = {
   play: "",
 };
 
-// mensagem pré-preenchida ao abrir o Gmail
-const CONTACT_SUBJECT = "Edição de vídeo";
-const CONTACT_BODY = "Olá! Estou interessado em editar um vídeo.";
+// mensagem pré-preenchida ao abrir o Gmail (usada quando o admin não definiu uma)
+const DEFAULT_CONTACT_SUBJECT = "Video editing";
+const DEFAULT_CONTACT_BODY = "Hi! I'm interested in a video editing project.";
 
-function resolveHref(s: SocialLink, email: string): string {
+function resolveHref(s: SocialLink, email: string, subject?: string, message?: string): string {
   const url = (s.url || "").trim();
   if (s.icon === "email") {
     // sempre abre o Gmail compose (web), com assunto + mensagem prontos
     if (url.startsWith("http")) return url;
     const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
     if (!addr) return "#";
-    return `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${encodeURIComponent(CONTACT_SUBJECT)}&body=${encodeURIComponent(CONTACT_BODY)}`;
+    const su = (subject || "").trim() || DEFAULT_CONTACT_SUBJECT;
+    const body = (message || "").trim() || DEFAULT_CONTACT_BODY;
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${encodeURIComponent(su)}&body=${encodeURIComponent(body)}`;
   }
   if (s.icon === "discord") {
     if (!url) return "#";
@@ -131,7 +133,7 @@ export function ContactModal({ profile }: { profile: ProfileContent }) {
             return (
               <a
                 key={i}
-                href={resolveHref(s, profile.email)}
+                href={resolveHref(s, profile.email, profile.contactSubject, profile.contactMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-btn"

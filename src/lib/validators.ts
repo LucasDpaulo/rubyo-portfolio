@@ -53,6 +53,8 @@ export const profileSchema = z.object({
   footerBold: z.boolean().optional().default(false),
   footerItalic: z.boolean().optional().default(false),
   iconSize: z.enum(["sm", "md", "lg"]).optional().default("md"),
+  contactSubject: z.string().max(120).optional().default(""),
+  contactMessage: z.string().max(500).optional().default(""),
 });
 
 export const clientReviewSchema = z.object({

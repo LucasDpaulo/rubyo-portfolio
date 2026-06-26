@@ -86,7 +86,12 @@ function initialFields(p: EditPayload): Fields {
     case "role":
       return { role: p.profile.role };
     case "socials":
-      return { email: p.profile.email, iconSize: p.profile.iconSize ?? "md" };
+      return {
+        email: p.profile.email,
+        iconSize: p.profile.iconSize ?? "md",
+        contactSubject: p.profile.contactSubject ?? "",
+        contactMessage: p.profile.contactMessage ?? "",
+      };
     case "project":
       return {
         title: p.video.title,
@@ -155,6 +160,10 @@ async function save(
         p.type === "socials"
           ? ((fields.iconSize as "sm" | "md" | "lg") || "md")
           : p.profile.iconSize,
+      contactSubject:
+        p.type === "socials" ? fields.contactSubject : p.profile.contactSubject,
+      contactMessage:
+        p.type === "socials" ? fields.contactMessage : p.profile.contactMessage,
     };
     const res = await fetch("/api/admin/profile", {
       method: "PUT",
@@ -203,16 +212,24 @@ function SocialsEditor({
   socials,
   email,
   iconSize,
+  contactSubject,
+  contactMessage,
   setSocials,
   setEmail,
   setIconSize,
+  setContactSubject,
+  setContactMessage,
 }: {
   socials: SocialLink[];
   email: string;
   iconSize: "sm" | "md" | "lg";
+  contactSubject: string;
+  contactMessage: string;
   setSocials: (next: SocialLink[]) => void;
   setEmail: (v: string) => void;
   setIconSize: (v: "sm" | "md" | "lg") => void;
+  setContactSubject: (v: string) => void;
+  setContactMessage: (v: string) => void;
 }) {
   function update(i: number, patch: Partial<SocialLink>) {
     setSocials(socials.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
@@ -246,6 +263,25 @@ function SocialsEditor({
         onChange={(e) => setEmail(e.target.value)}
       />
       <p className="admin-hint">Usado no CTA do rodapé. Cada link de contato é editado abaixo.</p>
+
+      <label className="admin-label">Assunto do email (ao clicar no Gmail)</label>
+      <input
+        className="admin-input"
+        value={contactSubject}
+        placeholder="Video editing"
+        onChange={(e) => setContactSubject(e.target.value)}
+      />
+      <label className="admin-label">Mensagem do email (pré-preenchida)</label>
+      <textarea
+        className="admin-input"
+        style={{ height: 70, resize: "vertical" }}
+        value={contactMessage}
+        placeholder="Hi! I'm interested in a video editing project."
+        onChange={(e) => setContactMessage(e.target.value)}
+      />
+      <p className="admin-hint">
+        Em branco usa o padrão. Aparece já preenchido quando o visitante abre o Gmail.
+      </p>
 
       <label className="admin-label">Tamanho dos ícones</label>
       <div className="seg-control">
@@ -642,9 +678,13 @@ export function EditModal() {
                   socials={socials}
                   email={fields.email ?? ""}
                   iconSize={(fields.iconSize as "sm" | "md" | "lg") ?? "md"}
+                  contactSubject={fields.contactSubject ?? ""}
+                  contactMessage={fields.contactMessage ?? ""}
                   setSocials={setSocials}
                   setEmail={(v) => setFields((prev) => ({ ...prev, email: v }))}
                   setIconSize={(v) => setFields((prev) => ({ ...prev, iconSize: v }))}
+                  setContactSubject={(v) => setFields((prev) => ({ ...prev, contactSubject: v }))}
+                  setContactMessage={(v) => setFields((prev) => ({ ...prev, contactMessage: v }))}
                 />
               ) : (
                 payload &&

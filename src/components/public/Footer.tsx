@@ -33,6 +33,8 @@ export function Footer({
         socials={profile.socials}
         email={profile.email}
         size={profile.iconSize}
+        contactSubject={profile.contactSubject}
+        contactMessage={profile.contactMessage}
       />
       <div className="editable-wrapper footer-edit-wrap">
         <p className="footer-text" style={textStyle}>

@@ -22,6 +22,8 @@ export const DEFAULT_PROFILE: ProfileContent = {
   footerBold: false,
   footerItalic: false,
   iconSize: "md",
+  contactSubject: "",
+  contactMessage: "",
   socials: [
     { label: "@rubyoroberto", url: "https://x.com/rubyoroberto", icon: "x" },
     { label: "Discord", url: "#", icon: "discord" },

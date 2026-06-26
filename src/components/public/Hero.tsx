@@ -67,7 +67,13 @@ export function Hero({
           </div>
 
           <div className="editable-wrapper">
-            <SocialIcons socials={profile.socials} email={profile.email} size={profile.iconSize} />
+            <SocialIcons
+              socials={profile.socials}
+              email={profile.email}
+              size={profile.iconSize}
+              contactSubject={profile.contactSubject}
+              contactMessage={profile.contactMessage}
+            />
             {isAdmin && (
               <EditButton payload={{ type: "socials", profile }} label="Editar links" />
             )}

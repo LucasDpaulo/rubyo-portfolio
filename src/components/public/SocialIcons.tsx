@@ -7,9 +7,9 @@ import { trackClick } from "@/lib/track";
 
 type Variant = "hero" | "footer";
 
-// mensagem pré-preenchida ao abrir o Gmail
-const CONTACT_SUBJECT = "Edição de vídeo";
-const CONTACT_BODY = "Olá! Estou interessado em editar um vídeo.";
+// mensagem pré-preenchida ao abrir o Gmail (usada quando o admin não definiu uma)
+const DEFAULT_CONTACT_SUBJECT = "Video editing";
+const DEFAULT_CONTACT_BODY = "Hi! I'm interested in a video editing project.";
 
 function emailAddress(s: SocialLink, email: string): string {
   const url = (s.url || "").trim();
@@ -18,14 +18,16 @@ function emailAddress(s: SocialLink, email: string): string {
   return url || email;
 }
 
-function resolveHref(s: SocialLink, email: string): string {
+function resolveHref(s: SocialLink, email: string, subject?: string, message?: string): string {
   const url = (s.url || "").trim();
   if (s.icon === "email") {
     // sempre abre o Gmail compose (web), com assunto + mensagem prontos
     if (url.startsWith("http")) return url;
     const addr = url.startsWith("mailto:") ? url.slice(7) : url || email;
     if (!addr) return "#";
-    return `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${encodeURIComponent(CONTACT_SUBJECT)}&body=${encodeURIComponent(CONTACT_BODY)}`;
+    const su = (subject || "").trim() || DEFAULT_CONTACT_SUBJECT;
+    const body = (message || "").trim() || DEFAULT_CONTACT_BODY;
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${encodeURIComponent(su)}&body=${encodeURIComponent(body)}`;
   }
   if (s.icon === "discord") {
     if (!url) return "#";
@@ -65,11 +67,15 @@ export function SocialIcons({
   socials,
   email,
   size = "md",
+  contactSubject,
+  contactMessage,
 }: {
   variant?: Variant;
   socials: SocialLink[];
   email: string;
   size?: "sm" | "md" | "lg";
+  contactSubject?: string;
+  contactMessage?: string;
 }) {
   const copyValue = useCallback((value: string) => {
     const temp = document.createElement("input");
@@ -93,7 +99,7 @@ export function SocialIcons({
       {socials.map((s, i) => {
         const icon = s.icon as IconName;
         const title = s.label || s.icon;
-        const href = resolveHref(s, email);
+        const href = resolveHref(s, email, contactSubject, contactMessage);
         const copyText = copyTextFor(s, email);
         return (
           <a
