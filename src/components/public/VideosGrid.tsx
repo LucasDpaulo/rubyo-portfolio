@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from "react";
 import type { Video } from "@prisma/client";
 import { VideoCard } from "@/components/public/VideoCard";
-import { Reveal } from "@/components/transitions/Reveal";
 import type { SocialLink } from "@/lib/validators";
 
 type LayoutMode = "default" | "grid" | "list";
@@ -81,7 +80,7 @@ export function VideosGrid({
   return (
     <section id="work" className="work">
       {(shorts.length > 0 || isAdmin) && (
-        <Reveal>
+        <div>
           <div className="section-header">
             <span className="section-label">TikTok / Shorts</span>
             <div className="section-actions">
@@ -102,13 +101,13 @@ export function VideosGrid({
               />
             ))}
           </div>
-        </Reveal>
+        </div>
       )}
 
       {middleSlot}
 
       {(longs.length > 0 || isAdmin) && (
-        <Reveal style={{ marginTop: "2rem" }}>
+        <div style={{ marginTop: "2rem" }}>
           <div className="section-header">
             <span className="section-label">Long Form</span>
             <div className="section-actions">
@@ -135,7 +134,7 @@ export function VideosGrid({
               />
             ))}
           </div>
-        </Reveal>
+        </div>
       )}
 
       {videos.length === 0 && !isAdmin && (
