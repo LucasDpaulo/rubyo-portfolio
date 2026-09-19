@@ -33,15 +33,13 @@ export default async function HomePage() {
         isAdmin={isAdmin}
         socials={profile.socials}
         email={profile.email}
-        middleSlot={
-          <ClientsSection
-            clients={clients.items}
-            videos={videos}
-            socials={profile.socials}
-            email={profile.email}
-            isAdmin={isAdmin}
-          />
-        }
+      />
+      <ClientsSection
+        clients={clients.items}
+        videos={videos}
+        socials={profile.socials}
+        email={profile.email}
+        isAdmin={isAdmin}
       />
       <Footer profile={profile} isAdmin={isAdmin} />
       <ContactModal profile={profile} />

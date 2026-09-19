@@ -1,4 +1,3 @@
-import { Reveal } from "@/components/transitions/Reveal";
 import { EditButton } from "@/components/public/EditButton";
 import { ClientsCarousel } from "@/components/public/ClientsCarousel";
 import type { ClientReview, SocialLink } from "@/lib/validators";
@@ -21,7 +20,7 @@ export function ClientsSection({
 
   return (
     <section id="clients" className="clients">
-      <Reveal>
+      <div>
         <div className="section-header">
           <span className="section-label">Clientes</span>
           {isAdmin && (
@@ -41,7 +40,7 @@ export function ClientsSection({
             </p>
           )
         )}
-      </Reveal>
+      </div>
     </section>
   );
 }
