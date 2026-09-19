@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Video } from "@prisma/client";
 import type { ClientReview, SocialLink } from "@/lib/validators";
-import { ClientAvatar, VerifiedBadge } from "@/components/public/ClientAvatar";
+import { ClientAvatar } from "@/components/public/ClientAvatar";
 import { VideoCard } from "@/components/public/VideoCard";
 import { parseVideoUrl } from "@/lib/youtube";
 
@@ -111,7 +111,6 @@ export function ClientChannelModal({
             <div className="channel-meta">
               <h2 className="channel-name">
                 {name}
-                {client.verified && <VerifiedBadge />}
               </h2>
               {statLine && <p className="channel-stats">{statLine}</p>}
               {description && <p className="channel-desc">{description}</p>}

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Video } from "@prisma/client";
 import type { ClientReview, SocialLink } from "@/lib/validators";
-import { ClientAvatar, VerifiedBadge } from "@/components/public/ClientAvatar";
+import { ClientAvatar } from "@/components/public/ClientAvatar";
 import { ClientChannelModal } from "@/components/public/ClientChannelModal";
 
 const STATIC_MAX = 720; // banner de 1 cliente (preenche a largura)
@@ -63,7 +63,6 @@ function Card({
       <span className="client-chip-text">
         <span className="client-chip-name" style={{ fontSize: `${sizing.nameRem}rem` }}>
           {name}
-          {client.verified && <VerifiedBadge />}
         </span>
         {subs && (
           <span className="client-chip-subs" style={{ fontSize: `${sizing.subsRem}rem` }}>
