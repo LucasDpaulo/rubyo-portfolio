@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${bebas.variable} ${dm.variable} ${archivoBlack.variable}`}>
+    <html lang="pt-BR" className={`${bebas.variable} ${dm.variable} ${archivoBlack.variable}`} suppressHydrationWarning>
       <body>
         {children}
         <VisitBeacon />
