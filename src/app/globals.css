@@ -171,12 +171,17 @@ select {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 2rem 5%;
+  padding: clamp(6rem, 16vh, 11rem) 5% 3rem;
   gap: 2rem;
-  min-height: 100vh;
-  justify-content: center;
+  min-height: 80vh;
+  justify-content: flex-start;
   align-items: center;
   overflow: hidden;
+}
+@media (min-width: 1024px) {
+  .hero {
+    padding-top: clamp(8rem, 21vh, 14rem);
+  }
 }
 .hero-bg {
   position: absolute;
@@ -427,13 +432,13 @@ body.admin-mode .profile-analytics-btn {
 
 /* ─── WORK ────────────────────────────────────────────────────────── */
 .work {
-  padding: 4rem 5%;
-  max-width: 1000px;
+  padding: 2.5rem 4% 4rem;
+  max-width: 1500px;
   margin: 0 auto;
 }
 @media (min-width: 1920px) {
   .work {
-    max-width: 1400px;
+    max-width: 1760px;
   }
 }
 
@@ -500,9 +505,9 @@ body.admin-mode .profile-analytics-btn {
 
 .short-section {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 280px));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   justify-content: center;
-  gap: 20px;
+  gap: 18px;
   margin-bottom: 3rem;
   width: 100%;
 }
@@ -1424,10 +1429,17 @@ body.admin-mode .reorder-arrows {
 }
 
 /* ===================== Clientes (carrossel + canal) ===================== */
-/* fica entre Shorts e Long Form, dentro de .work — só espaçamento vertical,
-   alinhado com os cards de vídeo (sem padding/max-width próprios). */
+/* última seção da home (depois dos vídeos) — container próprio alinhado
+   com a largura do .work. */
 .clients {
-  padding: 1rem 0 2.5rem;
+  padding: 1rem 4% 5rem;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+@media (min-width: 1920px) {
+  .clients {
+    max-width: 1760px;
+  }
 }
 
 /* ícone circular reusável (chip / pop-up) */
